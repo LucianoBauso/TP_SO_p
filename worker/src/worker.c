@@ -1,30 +1,18 @@
-#include <utils/hello.h>
 #include <worker.h>
+#include "inicializar_estructuras.h"
 
 int main(void) {
-    saludar("worker");
+    
+     inicializar_worker();
 
-    int conexion;
-	char* ip_master;
-    char* ip_storage;
-	int puerto_master;
-    int puerto_storage;
-	char* valor;
 
-	t_log* logger;
-	t_config* config;
-
-    /* ---------------- LOGGING ---------------- */
-
-	logger = iniciar_logger();
-    log_info(logger, "Soy Worker");
-
-    /* ---------------- ARCHIVO DE CONFIGURACION ---------------- */
-
-	config = iniciar_config();
-    ip_master = config_get_string_value(config, "IP_MASTER");
-    ip_storage = config_get_string_value(config, "IP_STORAGE");
-	puerto_master = config_get_int_value(config, "PUERTO_MASTER");
-    puerto_storage = config_get_int_value(config, "PUERTO_MASTER");
+    terminar_programa(logger, config);
+    return 0;
 	
+}
+
+void terminar_programa( t_log* logger, t_config* config){ //Deberia llamar tambnien a los sockets y liberarlos
+	log_destroy(logger);
+	config_destroy(config);
+	//liberar_conexion(conexion);
 }
