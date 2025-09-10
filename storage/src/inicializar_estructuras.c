@@ -8,10 +8,10 @@ t_config* config;
     char * punto_montaje;
     int retardo_operacion;
     int retardo_acceso_bloque;
-    char * log_level; 
+    t_log_level log_level; 
 
 t_log* iniciar_logger(void) {
-	t_log* nuevo_logger = log_create("storage.log", "STORAGE", 1, LOG_LEVEL_INFO);
+	t_log* nuevo_logger = log_create("storage.log", "STORAGE", 1, log_level);
 	if (nuevo_logger==NULL){
 		perror("Error al crear el logger");
 		abort();	
@@ -46,14 +46,15 @@ void leer_config(t_config* config){
     punto_montaje = config_get_string_value(config, "PUNTO_MONTAJE");
     retardo_operacion=config_get_int_value(config, "RETARDO_OPERACION");
     retardo_acceso_bloque = config_get_int_value(config, "RETARDO_ACCESO_BLOQUE");
-    log_level = config_get_string_value(config, "LOG_LEVEL");
+    log_level = log_level_from_string(config_get_string_value(config, "LOG_LEVEL"));
 }
 
 void inicializar_storage(void){
-    logger = iniciar_logger();
-    log_info(logger, "Creado Logger de Storage");
+
     config = iniciar_config();
     leer_config(config);
+    logger = iniciar_logger();
+    log_info(logger, "Creado Logger de Storage");
     // Esto es solo para probar que config y logger anden, despues se borra
     //log_info(logger, "si lo que quiero loguear abajo loggea, creo que anda todo bien esto entonces: ");
     //log_info(logger,"el valor del punto de montaje es: %s", punto_montaje);
