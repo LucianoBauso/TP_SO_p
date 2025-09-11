@@ -41,7 +41,7 @@ int main(void)
 
 	terminar_programa(conexion, logger, config);
 
-	printf("\nQUERY CONTROL CERRADO!!!!!");
+	printf("\nQUERY CONTROL CERRADO!!!!!\n");
 }
 
 t_log* iniciar_logger(void)
