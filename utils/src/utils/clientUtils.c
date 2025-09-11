@@ -36,6 +36,9 @@ int crear_conexion(char *ip, char* puerto, char* modulo)
 	
 	if (resultado_conexion == 0) {
 		printf("## Conexión al %s exitosa. IP: %s, Puerto: %s\n", modulo, ip, puerto);
+	}else{
+		printf("## No se pudo conectar al %s. IP: %s, Puerto: %s\n", modulo, ip, puerto);
+		exit(EXIT_FAILURE);
 	}
 
 	freeaddrinfo(server_info);
