@@ -8,7 +8,7 @@
 #include<commons/config.h>
 #include<readline/readline.h>
 
-#include "utils/hello.h"
+
 
 
 t_log* iniciar_logger(void);
