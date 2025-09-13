@@ -6,27 +6,27 @@
 
 int main(int argc, char** argv)
 {
-    if (argc < 3) {
-        fprintf(stderr, "Uso: %s [archivo_query] [prioridad]\n", argv[0]);
+    if (argc < 4) {
+        fprintf(stderr, "Uso: %s [archivo_config] [archivo_query] [prioridad]\n", argv[0]);
         return EXIT_FAILURE;
     }
-    char* archivo_query = argv[1];
-    char* prioridadStr  = argv[2];
+    char* archivo_config = argv[1];
+    char* archivo_query = argv[2];
+    char* prioridadStr  = argv[3];
 
     t_log* logger = iniciar_logger();
     log_info(logger, "Iniciando modulo Query Control !");
-    t_config* config = iniciar_config();
+    t_config* config = iniciar_config(archivo_config);
 
-    char* ip     = config_get_string_value(config, "IP");
-    char* puerto = config_get_string_value(config, "PUERTO");
-    // 'CLAVE' no la usamos para Check1, pero la dejamos por compatibilidad:
-    char* valor  = config_get_string_value(config, "CLAVE");
+    char* ip     = config_get_string_value(config, "IP_MASTER");
+    char* puerto = config_get_string_value(config, "PUERTO_MASTER");
 
-    log_info(logger, "Configuracion: IP=%s PUERTO=%s VALOR=%s", ip, puerto, valor);
+    log_info(logger, "Configuracion: IP_MASTER=%s PUERTO_MASTER=%s", ip, puerto);
 
     /* ---------------- CONEXION A MASTER ---------------- */
     int conexion = crear_conexion(ip, puerto, "Master");
-    log_info(logger, "Enviando Query='%s' con Prioridad=%s al Master...", archivo_query, prioridadStr);
+    log_info(logger, "## Conexión al Master exitosa. IP: %s, Puerto: %s", ip, puerto);
+    log_info(logger, "## Solicitud de ejecución de Query: %s, prioridad: %s", archivo_query, prioridadStr);
 
     /* ---------------- ENVIO DEL PAQUETE ---------------- */
     t_paquete* p = crear_paquete();
@@ -53,10 +53,9 @@ t_log* iniciar_logger(void)
     return nuevo_logger;
 }
 
-t_config* iniciar_config(void)
+t_config* iniciar_config(char* archivo_config)
 {
-    // Se mantiene tu archivo de config actual
-    t_config* nuevo_config = config_create("queryControl.config");
+    t_config* nuevo_config = config_create(archivo_config);
     if(nuevo_config == NULL){
         perror("No se pudo crear el config");
         exit(EXIT_FAILURE);

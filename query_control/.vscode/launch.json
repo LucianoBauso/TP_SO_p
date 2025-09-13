@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": [],
+      "args": ["queryControl.config", "queries/crear_materias.query", "3"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
