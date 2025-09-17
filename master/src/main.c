@@ -9,8 +9,8 @@ t_log* logger;
 int main(void) {
     logger = log_create("master.log", "MASTER", 1, LOG_LEVEL_INFO);
 
-    int sock_srv = iniciar_servidor();                  // escucha en PUERTO "4444"
-    log_info(logger, "Master escuchando en %s ...", PUERTO);
+    int sock_srv = iniciar_servidor("9001");                  // escucha en PUERTO "9001"
+    log_info(logger, "Master escuchando en %s ...", "9001");
 
     int next_query_id = 0;
     int nivel_mp = 0;
