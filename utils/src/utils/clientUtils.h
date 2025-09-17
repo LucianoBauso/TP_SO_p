@@ -1,5 +1,5 @@
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef S_UTILS_H_
+#define S_UTILS_H_
 
 #include<stdio.h>
 #include<stdlib.h>

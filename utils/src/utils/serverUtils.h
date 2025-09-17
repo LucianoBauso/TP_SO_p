@@ -1,5 +1,5 @@
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef C_UTILS_H_
+#define C_UTILS_H_
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -13,11 +13,11 @@
 
 #define PUERTO "4444"
 
-typedef enum
-{
-	MENSAJE,
-	PAQUETE
-}op_code;
+//typedef enum
+//{
+//	MENSAJE,
+//	PAQUETE
+//}op_code;
 
 extern t_log* logger;
 
