@@ -15,12 +15,18 @@ int main(int argc, char* argv[]) {
     char* ip_storage;
     int puerto_master;
     int puerto_storage;
+    int tam_memoria;
+    int retardo_memoria;
+    char* algoritmo_reemplazo;
+    char* path_queries;
 
     t_log* logger;
     t_config* config;
 
+    t_log_level log_level;
+
     /* ---------------- LOGGING ---------------- */
-    logger = log_create("worker.log", "WORKER", 1, LOG_LEVEL_INFO);
+    logger = log_create("worker.log", "WORKER", 1, log_level);
     if (logger == NULL) {
         perror("No se pudo crear el logger");
         exit(EXIT_FAILURE);
@@ -43,6 +49,12 @@ int main(int argc, char* argv[]) {
     ip_storage = config_get_string_value(config, "IP_STORAGE");
     puerto_master = config_get_int_value(config, "PUERTO_MASTER");
     puerto_storage = config_get_int_value(config, "PUERTO_STORAGE");
+    tam_memoria = config_get_int_value(config, "TAM_MEMORIA");
+    retardo_memoria = config_get_int_value(config, "RETARDO_MEMORIA");
+    algoritmo_reemplazo = config_get_string_value(config, "ALGORITMO_REEMPLAZO");
+    path_queries = config_get_string_value(config, "PATH_QUERIES");
+    log_level= log_level_from_string(config_get_string_value(config, "LOG_LEVEL"));
+
 
     log_info(logger, "Config: Master=%s:%d | Storage=%s:%d",
              ip_master, puerto_master, ip_storage, puerto_storage);

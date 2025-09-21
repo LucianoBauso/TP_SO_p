@@ -1,14 +1,18 @@
 #include "inicializar_estructuras.h"
 
 t_log* logger;
-t_config* config;
+t_config* configStorage;
+t_config* configSuperBlock;
 
     int puerto_escucha;
     bool fresh_start;
     char * punto_montaje;
     int retardo_operacion;
     int retardo_acceso_bloque;
+    int FS_SIZE;
+    int BLOCK_SIZE;
     t_log_level log_level; 
+    char* path;
 
 t_log* iniciar_logger(void) {
 	t_log* nuevo_logger = log_create("storage.log", "STORAGE", 1, log_level);
@@ -19,9 +23,9 @@ t_log* iniciar_logger(void) {
 
 	return nuevo_logger;
 }
-
-t_config* iniciar_config(void) {
-	t_config* nuevo_config = config_create("storage.config");
+/*Creacion de storage.config*/
+t_config* iniciar_config(path) {
+	t_config* nuevo_config = config_create(path);
 	if (nuevo_config == NULL){
 		perror("Error al crear el config");
 		abort();
@@ -30,11 +34,12 @@ t_config* iniciar_config(void) {
 	return nuevo_config;
 }
 
-void leer_config(t_config* config){
+
+void leer_configStorage(t_config* configStorage){
 
 
-    puerto_escucha = config_get_int_value(config, "PUERTO_ESCUCHA");
-    char * valor = config_get_string_value(config, "FRESH_START");
+    puerto_escucha = config_get_int_value(configStorage, "PUERTO_ESCUCHA");
+    char * valor = config_get_string_value(configStorage, "FRESH_START");
 
     if (strcmp(valor, "TRUE") == 0) {
         fresh_start = true;
@@ -43,16 +48,32 @@ void leer_config(t_config* config){
     } else {
         perror("Valor incorrecto en config.");
     }
-    punto_montaje = config_get_string_value(config, "PUNTO_MONTAJE");
-    retardo_operacion=config_get_int_value(config, "RETARDO_OPERACION");
-    retardo_acceso_bloque = config_get_int_value(config, "RETARDO_ACCESO_BLOQUE");
-    log_level = log_level_from_string(config_get_string_value(config, "LOG_LEVEL"));
+    punto_montaje = config_get_string_value(configStorage, "PUNTO_MONTAJE");
+    retardo_operacion=config_get_int_value(configStorage, "RETARDO_OPERACION");
+    retardo_acceso_bloque = config_get_int_value(configStorage, "RETARDO_ACCESO_BLOQUE");
+    log_level = log_level_from_string(config_get_string_value(configStorage, "LOG_LEVEL"));
+}
+
+void leer_configSuperBlock(t_config* configSuperBlock){
+
+    if (strcmp(valor, "TRUE") == 0) {
+        fresh_start = true;
+    } else if (strcmp(valor, "FALSE") == 0) {
+        fresh_start = false;
+    } else {
+        perror("Valor incorrecto en config.");
+    }
+
+    FS_SIZE=config_get_int_value(configStorage, "FS_SIZE");
+    BLOCK_SIZE=config_get_int_value(configStorage, "BLOCK_SIZE");
 }
 
 void inicializar_storage(void){
 
-    config = iniciar_config();
-    leer_config(config);
+    configStorage = iniciar_config("storage.config");
+    leer_configStorage(configStorage);
+    configSuperBlock = iniciar_config("superblock.config");
+    leer_configSuperBlock(configSuperBlock);
     logger = iniciar_logger();
     log_info(logger, "Creado Logger de Storage");
     // Esto es solo para probar que config y logger anden, despues se borra

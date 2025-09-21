@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <storage.h>
 // Provisorio hasta que uses el enum de utils
 #define MENSAJE 1
 
@@ -73,8 +73,8 @@ int main(int argc, char* argv[]) {
             log_info(logger, "Pedido recibido del Worker: %s", mensaje);
 
             // Responder tamaño de bloque fijo
-            log_info(logger, "Enviando respuesta (tamaño bloque = 64)...");
-            enviar_mensaje("64", cliente_fd);
+            log_info(logger, "Enviando respuesta: %d", BLOCK_SIZE);
+            enviar_mensaje(BLOCK_SIZE, cliente_fd);
             log_info(logger, "Respuesta enviada correctamente");
 
             free(mensaje);
