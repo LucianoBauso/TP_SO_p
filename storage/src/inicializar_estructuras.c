@@ -18,7 +18,7 @@ t_log* iniciar_logger(void) {
 	t_log* nuevo_logger = log_create("storage.log", "STORAGE", 1, log_level);
 	if (nuevo_logger==NULL){
 		perror("Error al crear el logger");
-		abort();	
+		exit(EXIT_FAILURE);	
 	}
 
 	return nuevo_logger;
@@ -28,8 +28,8 @@ t_config* iniciar_config(path) {
 	t_config* nuevo_config = config_create(path);
 	if (nuevo_config == NULL){
 		perror("Error al crear el config");
-		abort();
-	}
+		exit(EXIT_FAILURE);
+    }
 
 	return nuevo_config;
 }
@@ -37,8 +37,14 @@ t_config* iniciar_config(path) {
 
 void leer_configStorage(t_config* configStorage){
 
-
     puerto_escucha = config_get_int_value(configStorage, "PUERTO_ESCUCHA");
+    //PREGUNTAR si esto va en cada clave.
+    //Si alcanza con que uno de los valores no esté para que se rompa. 
+    if (!config_has_property(configStorage, "PUERTO_ESCUCHA")) {
+        perror("El config no tiene la clave PUERTO_ESCUCHA");
+        config_destroy(configStorage);
+        exit(EXIT_FAILURE);
+    }
     char * valor = config_get_string_value(configStorage, "FRESH_START");
 
     if (strcmp(valor, "TRUE") == 0) {
@@ -56,14 +62,6 @@ void leer_configStorage(t_config* configStorage){
 
 void leer_configSuperBlock(t_config* configSuperBlock){
 
-    if (strcmp(valor, "TRUE") == 0) {
-        fresh_start = true;
-    } else if (strcmp(valor, "FALSE") == 0) {
-        fresh_start = false;
-    } else {
-        perror("Valor incorrecto en config.");
-    }
-
     FS_SIZE=config_get_int_value(configStorage, "FS_SIZE");
     BLOCK_SIZE=config_get_int_value(configStorage, "BLOCK_SIZE");
 }
@@ -76,6 +74,8 @@ void inicializar_storage(void){
     leer_configSuperBlock(configSuperBlock);
     logger = iniciar_logger();
     log_info(logger, "Creado Logger de Storage");
+    log_info(logger, "Leí puerto_escucha = %s", puerto_escucha);
+
     // Esto es solo para probar que config y logger anden, despues se borra
     //log_info(logger, "si lo que quiero loguear abajo loggea, creo que anda todo bien esto entonces: ");
     //log_info(logger,"el valor del punto de montaje es: %s", punto_montaje);

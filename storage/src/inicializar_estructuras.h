@@ -1,14 +1,13 @@
 #ifndef INICIALIZAR_ESTRUCTURAS_H_
 #define INICIALIZAR_ESTRUCTURAS_H_
 
-#include "storage.h"
+#include <storage.h>
 #include <stdlib.h>
 
 //---------------variables
 extern t_log* logger;
 extern t_config* configStorage;
 extern t_config* configSuperBlock;
-
 
 
 //-------------prototipos de funciones
