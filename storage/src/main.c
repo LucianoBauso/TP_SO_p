@@ -13,13 +13,16 @@
 int main(int argc, char* argv[]) {
 
     inicializar_storage();
-    if (argc < 2) { // PREGUNTAR si manda a ejeutar STORAGE con parametros ¿
+    /*
+        if (argc < 2) { // PREGUNTAR si manda a ejeutar STORAGE con parametros ¿
         log_error(logger, "Uso: ./bin/storage <archivo_config>");
         exit(EXIT_FAILURE);
     }
     //log_info(logger, "Intentando abrir config: %s", argv[1]);
 
     
+    */
+
    // ----------- SERVER -----------
     crear_server_storage();
     

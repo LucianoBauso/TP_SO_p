@@ -27,8 +27,9 @@ void crear_server_storage (){
             log_info(logger, "Pedido recibido del Worker: %s", mensaje);
 
             // Responder tamaño de bloque fijo
-            log_info(logger, "Enviando respuesta: %d", BLOCK_SIZE);
-            enviar_mensaje(BLOCK_SIZE, cliente_fd);
+            //log_info(logger, "Enviando respuesta: %d", BLOCK_SIZE);
+           // enviar_mensaje(BLOCK_SIZE, cliente_fd); 
+           enviar_mensaje("holis",cliente_fd); //HArdcodeado mal
             log_info(logger, "Respuesta enviada correctamente");
 
             free(mensaje);

@@ -10,7 +10,8 @@
 
 #include<inicializar_estructuras.h>
 
-void terminar_programa(t_log*, t_config*); //Seguro haya que cambiarlo para agregar los sockets
+void crear_server_storage();
+void terminar_programa(t_log*, t_config*, t_config*); //Seguro haya que cambiarlo para agregar los sockets
 
 
 #endif

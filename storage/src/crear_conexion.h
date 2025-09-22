@@ -3,8 +3,8 @@
 
 #include <utils/serverUtils.h>
 #include <utils/clientUtils.h>
-#include <inicializar_estructuras.c>
+#include <inicializar_estructuras.h>
 
-
+void crear_server_storage (void);
 
 #endif

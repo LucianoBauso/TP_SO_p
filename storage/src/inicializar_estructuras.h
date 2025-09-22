@@ -9,6 +9,8 @@ extern t_log* logger;
 extern t_config* configStorage;
 extern t_config* configSuperBlock;
 
+extern char* puerto_escucha;
+extern int BLOCK_SIZE; // PREGUNTAR que onda el tipo ¿ 
 
 //-------------prototipos de funciones
 t_log* iniciar_logger(void);
