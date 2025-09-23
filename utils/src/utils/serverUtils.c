@@ -100,6 +100,16 @@ void recibir_mensaje(int socket_cliente) {
     }
 }
 
+
+void recibir_mensaje_int(int socket_cliente) {
+    int size;
+    int* buffer = (int*) recibir_buffer(&size, socket_cliente);
+    if (buffer != NULL) {
+        printf("Me llegó el mensaje: %d\n", *buffer);
+        free(buffer);
+    }
+}
+
 t_list* recibir_paquete(int socket_cliente) {
     int size;
     int desplazamiento = 0;

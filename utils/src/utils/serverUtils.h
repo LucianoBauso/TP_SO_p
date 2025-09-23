@@ -31,6 +31,8 @@ void* recibir_buffer(int* size, int socket_cliente);
 // Recibe y loguea un mensaje (usa commons log)
 void recibir_mensaje(int socket_cliente);
 
+void recibir_mensaje_int(int socket_cliente);
+
 // Recibe un paquete (lista de valores)
 t_list* recibir_paquete(int socket_cliente);
 

@@ -11,6 +11,7 @@ int tam_memoria;
 int retardo_memoria;
 char* algoritmo_reemplazo;
 char* path_queries;
+char * path;
 
 
 t_log_level log_level;
@@ -25,11 +26,11 @@ t_log* iniciar_logger(void) {
 	return nuevo_logger;
 }
 
-t_config* iniciar_config(void) {
-	t_config* nuevo_config = config_create("worker.config");
+t_config* iniciar_config(char* path) {
+	t_config* nuevo_config = config_create(path);
 	if (nuevo_config == NULL){
 		perror("Error al crear el config");
-		abort();
+		exit(EXIT_FAILURE);
 	}
 
 	return nuevo_config;
@@ -50,7 +51,7 @@ void leer_config(t_config* config){
 
 void inicializar_worker(void){
 
-    config = iniciar_config();
+    config = iniciar_config("worker.config");
     leer_config(config);
     logger = iniciar_logger();
     log_info(logger, "Creado Logger de Worker");
