@@ -12,19 +12,25 @@ int iniciar_servidor(char* puerto) {
 
     int rv;
     if ((rv = getaddrinfo(NULL, puerto, &hints, &servinfo)) != 0) {
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        fprintf(stderr, "Error en getaddrinfo: %s\n", gai_strerror(rv));
         return -1;
     }
 
     // Intentar bind en alguna dirección válida
     for (p = servinfo; p != NULL; p = p->ai_next) {
         if ((socket_servidor = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
-            perror("socket");
+            perror("Error al cerrar socket");
             continue;
         }
 
-        if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-            perror("setsockopt");
+        if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+            perror("Error al configurar setsockopt");
+            close(socket_servidor);
+            continue;
+        }
+        
+        if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(yes)) == -1) {
+            perror("Error al configurar REUSEPORT");
             close(socket_servidor);
             continue;
         }
