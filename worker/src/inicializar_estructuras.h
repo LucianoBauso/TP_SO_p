@@ -11,6 +11,10 @@ extern t_config* config;
 extern char * ip_storage;
 extern int puerto_storage;
 
+extern char * ip_master;
+extern int puerto_master;
+
+
 //-------------prototipos de funciones
 t_log* iniciar_logger(void);
 t_config* iniciar_config(char* );
