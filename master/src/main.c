@@ -1,6 +1,5 @@
-#include <utils/hello.h>
+#include "master.h"
 
-int main(int argc, char* argv[]) {
-    saludar("master");
-    return 0;
+int main(void) {
+    return ejecutar_master();
 }

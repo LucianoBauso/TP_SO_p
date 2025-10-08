@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "storage.h": "c",
+        "log.h": "c",
+        "cstdlib": "c"
+    }
+}

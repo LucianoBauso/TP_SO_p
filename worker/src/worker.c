@@ -1,30 +1,25 @@
-#include <utils/hello.h>
+#include <utils/clientUtils.h>
+#include <utils/serverUtils.h>
 #include <worker.h>
+#include <commons/log.h>
+#include <commons/config.h>
+#include <utils/protocol.h>  
+#include <stdlib.h>
 
-int main(void) {
-    saludar("worker");
+#include <inicializar_estructuras.h>
+#include <crear_conexion.h>
 
-    int conexion;
-	char* ip_master;
-    char* ip_storage;
-	int puerto_master;
-    int puerto_storage;
-	char* valor;
+// Provisorio hasta usar el enum oficial de utils
+#define MENSAJE 1
 
-	t_log* logger;
-	t_config* config;
+int main(int argc, char* argv[]) {
 
-    /* ---------------- LOGGING ---------------- */
+    inicializar_worker();
+    crear_client_worker();
+    //Cerrar programa
+   
+    config_destroy(config);
+    log_destroy(logger);
 
-	logger = iniciar_logger();
-    log_info(logger, "Soy Worker");
-
-    /* ---------------- ARCHIVO DE CONFIGURACION ---------------- */
-
-	config = iniciar_config();
-    ip_master = config_get_string_value(config, "IP_MASTER");
-    ip_storage = config_get_string_value(config, "IP_STORAGE");
-	puerto_master = config_get_int_value(config, "PUERTO_MASTER");
-    puerto_storage = config_get_int_value(config, "PUERTO_MASTER");
-	
+    return 0;
 }
