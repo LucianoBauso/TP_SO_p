@@ -12,7 +12,7 @@ extern t_log* logger;
 extern t_config* config;
 
 //--Variables que se usan a lo largo de la ejecucion del modulo. 
-//extern char* coso;
+extern char* puerto_escucha;
 
 //-------------prototipos de funciones
 t_log* iniciar_logger(void);

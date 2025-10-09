@@ -3,15 +3,25 @@
 //t_log* logger;
 
 int ejecutar_master(void) {
-    logger = log_create("master.log", "MASTER", 1, LOG_LEVEL_INFO);
+    //logger = log_create("master.log", "MASTER", 1, LOG_LEVEL_INFO);
 
-    int sock_srv = iniciar_servidor("9001");                  // escucha en PUERTO "9001"
-    log_info(logger, "Master escuchando en %s ...", "9001");
+    int sock_srv = iniciar_servidor(puerto_escucha);                  // escucha en PUERTO "9001"
+    if (sock_srv == -1) {
+        log_error(logger, "No se pudo iniciar el servidor en puerto %s", puerto_escucha);
+        config_destroy(config);
+        log_destroy(logger);
+        exit(EXIT_FAILURE);
+    }
+    log_info(logger, "Master escuchando en %s ...", puerto_escucha);
 
     int next_query_id = 0;
     int nivel_mp = 0;
+//aca arranca while(t) ?
+while(1){
+
 
     int sock_qc = esperar_cliente(sock_srv);
+    log_info(logger,"Se conecto un cliente");
     int op = recibir_operacion(sock_qc);
 
     if (op == PAQUETE) {
@@ -37,7 +47,8 @@ int ejecutar_master(void) {
     }
 
     close(sock_qc);
+}
     close(sock_srv);
-    log_destroy(logger);
+    //log_destroy(logger);
     return 0;
 }

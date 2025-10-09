@@ -6,8 +6,9 @@
 #include <commons/collections/list.h>
 #include "utils/serverUtils.h"
 #include "utils/clientUtils.h"
+#include "inicializar_estructuras.h"
 
-extern t_log* logger;
+//extern t_log* logger;
 
 /**
  * @brief Ejecuta la lógica principal del master
