@@ -1,4 +1,4 @@
-#include "master.h"
+#include "main.h"
 
 int main(int argc, char* argv[]) {
     if (argc <2){
@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
     inicializar_master(); // listop
-    crear_server_master();
-    terminar_master();
+    //crear_server_master();
+    //terminar_master();
     return 0;
 }

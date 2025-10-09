@@ -53,7 +53,7 @@ void leer_configMaster(t_config *config)
 void inicializar_master(void) {
 
     config = iniciar_config("master.config");
-    leer_configStorage(config);
+    leer_configMaster(config);
     logger = iniciar_logger();
     log_info(logger, "Creado Logger de Master");
     log_info(logger, "Leí puerto_escucha = %s", puerto_escucha);

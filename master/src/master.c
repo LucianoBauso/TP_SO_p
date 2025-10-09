@@ -1,6 +1,6 @@
 #include "master.h"
 
-t_log* logger;
+//t_log* logger;
 
 int ejecutar_master(void) {
     logger = log_create("master.log", "MASTER", 1, LOG_LEVEL_INFO);
