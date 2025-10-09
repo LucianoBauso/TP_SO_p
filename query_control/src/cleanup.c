@@ -1,5 +1,4 @@
-#include "main.h"
-#include <stdlib.h>
+#include "cleanup.h"
 
 void cleanup_recursos(t_argumentos* args, t_config_query* config, t_log* logger, t_config* config_commons)
 {

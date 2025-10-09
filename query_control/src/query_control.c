@@ -1,5 +1,4 @@
-#include "main.h"
-#include "utils/clientUtils.h"
+#include "query_control.h"
 
 void ejecutar_query_control(t_argumentos* args, t_config_query* config, t_log* logger)
 {

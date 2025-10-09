@@ -1,6 +1,4 @@
-#include "main.h"
-#include "utils/clientUtils.h"
-#include <string.h>
+#include "comunicacion.h"
 
 int conectar_a_master(t_config_query* config, t_log* logger)
 {

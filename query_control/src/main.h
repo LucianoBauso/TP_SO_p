@@ -3,6 +3,10 @@
 
 #include <commons/log.h>
 #include <commons/config.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
 
 // Estructuras
 typedef struct {
@@ -16,6 +20,11 @@ typedef struct {
     char* puerto_master;
     char* log_level;
 } t_config_query;
+
+//Valores leidos del config
+char * ip_master;
+int puerto_master;
+t_log_level log_level;
 
 // Funciones principales
 t_argumentos* procesar_argumentos(int argc, char** argv);
