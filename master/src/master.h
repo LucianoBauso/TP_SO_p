@@ -7,6 +7,7 @@
 #include "utils/serverUtils.h"
 #include "utils/clientUtils.h"
 #include "inicializar_estructuras.h"
+#include <pthread.h>
 
 //extern t_log* logger;
 
@@ -15,5 +16,6 @@
  * @return Código de salida del programa
  */
 int ejecutar_master(void);
+void* manejar_cliente(void* arg);
 
 #endif // MASTER_H

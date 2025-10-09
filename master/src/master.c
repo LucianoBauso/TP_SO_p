@@ -1,7 +1,20 @@
 #include "master.h"
 
 //t_log* logger;
+void* manejar_cliente(void* arg) {
+    int sock = *(int*)arg;
+    int tipo; // 0 = QC, 1 = worker,  otro es desconocido y cierra el socket. ---------------------------------------------
+    recv(sock, tipo, sizeof(tipo), 0);
 
+    if (tipo == 0) {
+        manejar_query_control(sock); // tu función que atiende QC
+    } else if (tipo == 1) {
+        manejar_worker(sock);       // tu función que atiende Worker
+    } else {
+        close(sock); // cliente desconocido
+    }
+    return NULL;
+}
 int ejecutar_master(void) {
     //logger = log_create("master.log", "MASTER", 1, LOG_LEVEL_INFO);
 
