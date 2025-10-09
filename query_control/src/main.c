@@ -1,5 +1,9 @@
 #include "main.h"
 
+//Valores leidos del config
+char * ip_master;
+char* puerto_master;
+t_log_level log_level;
 
 int main(int argc, char** argv)
 {

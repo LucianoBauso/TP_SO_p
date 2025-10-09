@@ -1,10 +1,11 @@
 #include "comunicacion.h"
+#include "main.h"
 
-int conectar_a_master(t_config_query* config, t_log* logger)
+int conectar_a_master(t_config* config, t_log* logger)
 {
-    int conexion = crear_conexion(config->ip_master, config->puerto_master, "Master");
+    int conexion = crear_conexion(ip_master, puerto_master, "Master");
     log_info(logger, "## Conexión al Master exitosa. IP: %s, Puerto: %s", 
-             config->ip_master, config->puerto_master);
+             ip_master, puerto_master);
     return conexion;
 }
 

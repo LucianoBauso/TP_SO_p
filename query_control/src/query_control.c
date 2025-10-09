@@ -1,6 +1,7 @@
 #include "query_control.h"
+#include "comunicacion.h"
 
-void ejecutar_query_control(t_argumentos* args, t_config_query* config, t_log* logger)
+void ejecutar_query_control(t_argumentos* args, t_config* config, t_log* logger)
 {
     // 1. Conectar al Master
     int conexion = conectar_a_master(config, logger);

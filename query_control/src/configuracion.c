@@ -1,4 +1,6 @@
 #include "configuracion.h"
+#include <commons/config.h>
+#include <commons/log.h>
 
 t_config* iniciar_config(char* archivo_config)
 {
@@ -12,7 +14,7 @@ t_config* iniciar_config(char* archivo_config)
 
 void leer_config_qc (t_config* config_qc ){
     ip_master = config_get_string_value(config_qc, "IP_MASTER");
-    puerto_master = config_get_int_value(config_qc, "PUERTO_MASTER");
+    puerto_master = config_get_string_value(config_qc, "PUERTO_MASTER");
     log_level = log_level_from_string(config_get_string_value(config_qc, "LOG_LEVEL"));
 }
 
