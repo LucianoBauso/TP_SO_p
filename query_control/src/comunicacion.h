@@ -12,8 +12,3 @@ int conectar_a_master(t_config* config, t_log* logger);
 void enviar_solicitud_query(int conexion, t_argumentos* args, t_log* logger);
 
 #endif
-
-/*
-
-
-*/

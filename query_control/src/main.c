@@ -7,6 +7,7 @@ t_log_level log_level;
 
 int main(int argc, char** argv)
 {
+    printf("Aca entre a main. ");
     // 1. Procesar argumentos. Guarda los parametros de entrada en un struct t_argumentos. 
     t_argumentos* args = procesar_argumentos(argc, argv);
 
