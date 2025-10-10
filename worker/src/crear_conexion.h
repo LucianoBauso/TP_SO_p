@@ -6,6 +6,6 @@
 #include <utils/clientUtils.h>
 #include <inicializar_estructuras.h>
 
-void crear_client_worker(void);
-
+void crear_client_worker_master(void);
+void crear_client_worker_storage(void);
 #endif

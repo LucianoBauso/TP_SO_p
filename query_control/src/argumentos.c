@@ -1,8 +1,7 @@
-#include "main.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include "argumentos.h"
 
+
+// t_argumentos: path_config, path_query, prioridad;
 t_argumentos* procesar_argumentos(int argc, char** argv)
 {
     if (argc < 4) {
