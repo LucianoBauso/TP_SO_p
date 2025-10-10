@@ -89,18 +89,19 @@ int ejecutar_master(void) {
     //EStos por ahí haya que borrarlos
     int next_query_id = 0;
     int nivel_mp = 0;
-//aca arranca while(t) ?
-while (1) {
-    int* client_sock_ptr = malloc(sizeof(int));
-    *client_sock_ptr = esperar_cliente(sock_srv);
-    if (*client_sock_ptr == -1) {
-        free(client_sock_ptr);
-        continue;
-    }
 
-    pthread_t hilo;
-    pthread_create(&hilo, NULL, manejar_cliente, client_sock_ptr);
-    pthread_detach(hilo);
-}
+    //aca arranca while(t) ?
+    while (1) {
+        int* client_sock_ptr = malloc(sizeof(int));
+        *client_sock_ptr = esperar_cliente(sock_srv);
+        if (*client_sock_ptr == -1) {
+            free(client_sock_ptr);
+            continue;
+        }
+
+        pthread_t hilo;
+        pthread_create(&hilo, NULL, manejar_cliente, client_sock_ptr);
+        pthread_detach(hilo);
+    }
 
 }
