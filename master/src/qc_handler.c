@@ -68,20 +68,23 @@ void manejar_query_control(int qc_socket) {
             char* prio_str   = list_get(items, 1);
             int   prioridad  = atoi(prio_str);
 
-            // ID único global de Query (NO local)
-            int query_id = __atomic_fetch_add(&NEXT_QUERY_ID, 1, __ATOMIC_SEQ_CST);
+            t_query* q = query_new(qc_socket, path_query, prioridad);
 
-            // Nivel de multiprocesamiento (cantidad de Workers conectados)
-            int nivel_mp = nivel_multiprocesamiento_actual();
+            qc_attach_query(qc_socket, q);    //Asociarla al QC
+            ready_enqueue(q);    //Encolar a ready
+
+            int nivel_mp = 0; // TODO: reemplazar por cantidad de workers conectados
 
             log_info(logger,
                 "## Se conecta un Query Control para ejecutar la Query %s con prioridad %d - Id asignado: %d. Nivel multiprocesamiento %d",
-                path_query, prioridad, query_id, nivel_mp
+                path_query, prioridad, q->query_id, nivel_mp
             );
 
+            //log_info(logger, "READY <- %s (id=%d). Tamaño READY=%d", path_query, q->query_id, ready_count());
+            log_debug(logger, "READY <- %s (id=%d). Tamaño READY=%d", path_query, q->query_id, ready_count());
+            
             enviar_mensaje("ACK_SUBMIT", qc_socket);
 
-            // Liberar paquete (strings incluidos)
             void _fre(void* x){ free(x); }
             list_destroy_and_destroy_elements(items, _fre);
 

@@ -33,10 +33,10 @@ void ejecutar_master(void) {
     int sock_srv = iniciar_servidor(puerto_escucha);
 
     if (sock_srv == -1) {
-        log_error(logger, "No se pudo iniciar el servidor en puerto %s", portstr);
+        log_error(logger, "No se pudo iniciar el servidor en puerto %s", puerto_escucha);
         return;
     }
-    log_info(logger, "Servidor Master escuchando en puerto %s", portstr);
+    log_info(logger, "Servidor Master escuchando en puerto %s", puerto_escucha);
 
     while (1) {
         int* client_sock_ptr = malloc(sizeof(int));

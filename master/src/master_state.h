@@ -35,4 +35,9 @@ extern int NEXT_QUERY_ID;       // Contador atómico y compartido de IDs de Quer
 void master_state_init(void);
 void master_state_shutdown(void);
 
+t_query* query_new(int qc_socket, const char* path_query, int prioridad);
+void ready_enqueue(t_query* q);                     //Encola en READY (FIFO)
+int ready_count(void);                              //Cantidad de elementos en READY (útil para logs)
+void qc_attach_query(int qc_socket, t_query* q);    //Asocia la query al dueño (QC) para poder limpiarla/identificarla luego
+
 #endif
