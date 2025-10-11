@@ -15,7 +15,7 @@
  * @brief Ejecuta la lógica principal del master
  * @return Código de salida del programa
  */
-int ejecutar_master(void);
+void ejecutar_master(void);
 void* manejar_cliente(void* arg);
 void manejar_query_control(int sock_qc);
 void manejar_worker(int sock_worker);
