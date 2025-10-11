@@ -16,14 +16,14 @@ void* manejar_cliente(void* arg) {
         return NULL;
     }
 
-    if (tipo == 0) {          // Query Control
         manejar_query_control(client_sock);
     } else if (tipo == 1) {   // Worker (lo hacemos luego)
-        // manejar_worker(client_sock);
+        manejar_worker(client_sock);
         close(client_sock);   // temporal
     } else {
         close(client_sock);
     }
+    if (tipo == 0) {          // Query Control
 
     return NULL;
 }
