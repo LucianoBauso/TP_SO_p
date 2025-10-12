@@ -6,13 +6,13 @@
 #include <commons/collections/list.h>
 #include "utils/serverUtils.h"
 #include "utils/clientUtils.h"
-
-extern t_log* logger;
+#include "../utils/inicializar_estructuras.h"
+#include <pthread.h>
 
 /**
  * @brief Ejecuta la lógica principal del master
- * @return Código de salida del programa
  */
-int ejecutar_master(void);
+void ejecutar_master(void);
+void* manejar_cliente(void* argumento);
 
 #endif // MASTER_H
