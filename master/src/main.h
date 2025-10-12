@@ -3,10 +3,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#include "inicializar_estructuras.h"
-#include "master.h"
 #include <commons/config.h>
 
-void terminar_master(t_log*, t_config*);
+#include "utils/inicializar_estructuras.h"
+#include "core/master.h"
+
+void finalizar_master(t_log* logger, t_config* configuracion);
+
 #endif
