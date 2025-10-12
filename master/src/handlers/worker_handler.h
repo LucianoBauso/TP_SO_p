@@ -1,7 +1,7 @@
 #ifndef WORKER_HANDLER_H
 #define WORKER_HANDLER_H
 
-#include "master_state.h"
+#include "../state/master_state.h"
 
 typedef struct {
     int worker_sock;

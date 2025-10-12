@@ -1,6 +1,6 @@
 #include "qc_handler.h"
-#include "master_state.h"
-#include "master.h"
+#include "../state/master_state.h"
+#include "../core/master.h"
 #include "utils/serverUtils.h"
 #include <commons/collections/list.h>
 #include <pthread.h>

@@ -6,7 +6,7 @@
 #include <commons/collections/list.h>
 #include "utils/serverUtils.h"
 #include "utils/clientUtils.h"
-#include "inicializar_estructuras.h"
+#include "../utils/inicializar_estructuras.h"
 #include <pthread.h>
 
 //extern t_log* logger;

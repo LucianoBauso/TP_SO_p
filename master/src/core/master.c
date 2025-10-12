@@ -1,6 +1,6 @@
 #include "master.h"
-#include "master_state.h"     // NUEVO
-#include "qc_handler.h"       // NUEVO
+#include "../state/master_state.h"
+#include "../handlers/qc_handler.h"
 #include "utils/serverUtils.h"
 #include <pthread.h>
 #include <stdlib.h>
@@ -16,6 +16,7 @@ void* manejar_cliente(void* arg) {
         return NULL;
     }
 
+    if (tipo == 0) {          // Query Control
         manejar_query_control(client_sock);
     } else if (tipo == 1) {   // Worker (lo hacemos luego)
         manejar_worker(client_sock);
@@ -23,7 +24,6 @@ void* manejar_cliente(void* arg) {
     } else {
         close(client_sock);
     }
-    if (tipo == 0) {          // Query Control
 
     return NULL;
 }

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "inicializar_estructuras.h"
+#include "../utils/inicializar_estructuras.h"
 #include "master.h"
 #include <commons/config.h>
 

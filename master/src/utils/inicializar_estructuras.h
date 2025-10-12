@@ -1,7 +1,6 @@
 #ifndef INICIALIZAR_ESTRUCTURAS_H_
 #define INICIALIZAR_ESTRUCTURAS_H_
 
-#include <main.h>
 #include <stdlib.h>
 #include <commons/log.h>
 #include <commons/string.h>
