@@ -9,15 +9,10 @@
 #include "../utils/inicializar_estructuras.h"
 #include <pthread.h>
 
-//extern t_log* logger;
-
 /**
  * @brief Ejecuta la lógica principal del master
- * @return Código de salida del programa
  */
 void ejecutar_master(void);
-void* manejar_cliente(void* arg);
-void manejar_query_control(int sock_qc);
-void manejar_worker(int sock_worker);
+void* manejar_cliente(void* argumento);
 
 #endif // MASTER_H

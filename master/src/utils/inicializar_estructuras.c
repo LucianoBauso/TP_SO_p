@@ -1,18 +1,16 @@
 #include "inicializar_estructuras.h"
 
+t_log* logger;
+t_config* config;
 
-t_log *logger;
-t_config *config;
-
-char * puerto_escucha;
+char* puerto_escucha;
 char* algoritmo_planificacion;
 int tiempo_aging;
-t_log_level log_level;
-char* path;
+t_log_level nivel_log;
 
-t_log *iniciar_logger(void)
+t_log* iniciar_logger(void)
 {
-    t_log *nuevo_logger = log_create("master.log", "MASTER", 1, log_level);
+    t_log* nuevo_logger = log_create("master.log", "MASTER", 1, nivel_log);
     if (nuevo_logger == NULL)
     {
         perror("Error al crear el logger");
@@ -21,40 +19,39 @@ t_log *iniciar_logger(void)
 
     return nuevo_logger;
 }
-/*Creacion de master.config*/
-t_config *iniciar_config(char *path)
+
+t_config* iniciar_configuracion(char* ruta_config)
 {
-    t_config *nuevo_config = config_create(path);
-    if (nuevo_config == NULL)
+    t_config* nueva_configuracion = config_create(ruta_config);
+    if (nueva_configuracion == NULL)
     {
-        perror("Error al crear el config");
+        perror("Error al crear la configuración");
         exit(EXIT_FAILURE);
     }
 
-    return nuevo_config;
+    return nueva_configuracion;
 }
 
-void leer_configMaster(t_config *config)
+void leer_configuracion_master(t_config* configuracion)
 {
-    puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
-    if (!config_has_property(config, "PUERTO_ESCUCHA"))
+    if (!config_has_property(configuracion, "PUERTO_ESCUCHA"))
     {
-        perror("El config no tiene la clave PUERTO_ESCUCHA");
-        config_destroy(config);
+        perror("La configuración no tiene la clave PUERTO_ESCUCHA");
+        config_destroy(configuracion);
         exit(EXIT_FAILURE);
     }
+    puerto_escucha = config_get_string_value(configuracion, "PUERTO_ESCUCHA");
     
-    algoritmo_planificacion = config_get_string_value(config, "ALGORITMO_PLANIFICACION");
-    tiempo_aging = config_get_int_value(config, "TIEMPO_AGING");
-    log_level = log_level_from_string(config_get_string_value(config, "LOG_LEVEL"));
+    algoritmo_planificacion = config_get_string_value(configuracion, "ALGORITMO_PLANIFICACION");
+    tiempo_aging = config_get_int_value(configuracion, "TIEMPO_AGING");
+    nivel_log = log_level_from_string(config_get_string_value(configuracion, "LOG_LEVEL"));
 }
-
 
 void inicializar_master(void) {
-
-    config = iniciar_config("master.config");
-    leer_configMaster(config);
+    config = iniciar_configuracion("master.config");
+    leer_configuracion_master(config);
     logger = iniciar_logger();
-    log_info(logger, "Creado Logger de Master");
-    log_info(logger, "Leí puerto_escucha = %s", puerto_escucha);
+    log_info(logger, "Logger de Master creado");
+    log_info(logger, "Puerto de escucha configurado: %s", puerto_escucha);
+    log_info(logger, "Algoritmo de planificación: %s", algoritmo_planificacion);
 }
