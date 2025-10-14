@@ -4,9 +4,9 @@ t_log* logger;
 t_config* config;
 
 char * ip_master;
-int puerto_master;
+char* puerto_master;
 char * ip_storage;
-int puerto_storage;
+char* puerto_storage;
 int tam_memoria;
 int retardo_memoria;
 char* algoritmo_reemplazo;
@@ -38,9 +38,9 @@ t_config* iniciar_config(char* path) {
 
 void leer_config(t_config* config){
     ip_master = config_get_string_value(config, "IP_MASTER");
-    puerto_master = config_get_int_value(config, "PUERTO_MASTER");
+    puerto_master = config_get_string_value(config, "PUERTO_MASTER");
     ip_storage = config_get_string_value(config, "IP_STORAGE");
-    puerto_storage = config_get_int_value(config, "PUERTO_STORAGE");
+    puerto_storage = config_get_string_value(config, "PUERTO_STORAGE");
     tam_memoria = config_get_int_value(config, "TAM_MEMORIA");
     retardo_memoria = config_get_int_value(config, "RETARDO_MEMORIA");
     algoritmo_reemplazo = config_get_string_value(config, "ALGORITMO_REEMPLAZO");
