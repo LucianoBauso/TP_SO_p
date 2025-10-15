@@ -19,6 +19,6 @@ extern char* puerto_master;
 t_log* iniciar_logger(void);
 t_config* iniciar_config(char* );
 void leer_config(t_config* config);
-void inicializar_worker(void);
+void inicializar_worker(char* path_config);
 
 #endif

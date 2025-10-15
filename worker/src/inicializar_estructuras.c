@@ -49,9 +49,9 @@ void leer_config(t_config* config){
 }
 
 
-void inicializar_worker(void){
+void inicializar_worker(char* path_config){
 
-    config = iniciar_config("worker.config"); //TODO: sacar el string hardcodeado y que sea el 1er parametro al levantar
+    config = iniciar_config(path_config); 
     leer_config(config);
     logger = iniciar_logger();
     log_info(logger, "Creado Logger de Worker");
