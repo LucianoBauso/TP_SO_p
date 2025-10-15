@@ -9,10 +9,10 @@ extern t_log* logger;
 extern t_config* config;
 
 extern char * ip_storage;
-extern int puerto_storage;
+extern char* puerto_storage;
 
 extern char * ip_master;
-extern int puerto_master;
+extern char* puerto_master;
 
 
 //-------------prototipos de funciones

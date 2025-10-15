@@ -8,4 +8,8 @@
 
 void crear_client_worker_master(void);
 void crear_client_worker_storage(void);
+
+int conectar_a_master();
+void enviar_ID_WORKER_a_master(int conexion_master);
+
 #endif

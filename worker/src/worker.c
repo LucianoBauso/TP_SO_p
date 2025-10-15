@@ -15,8 +15,10 @@
 int main(int argc, char* argv[]) {
 
     inicializar_worker();
-    crear_client_worker_master(); // ver orden 
-    crear_client_worker_storage(); // ver orden 
+
+    //crear_client_worker_storage(); 
+    crear_client_worker_master(); 
+    
     //Cerrar programa
    
     config_destroy(config);
