@@ -10,6 +10,9 @@ void crear_client_worker_master(int id);
 void crear_client_worker_storage(void);
 
 int conectar_a_master();
+int conectar_a_storage(); 
+
 void enviar_ID_WORKER_a_master(int conexion_master,int id_worker);
+void enviar_pedido_BLOCKSIZE_a_storage(int conexion_storage);
 
 #endif

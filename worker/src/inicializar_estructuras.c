@@ -55,8 +55,5 @@ void inicializar_worker(char* path_config){
     leer_config(config);
     logger = iniciar_logger();
     log_info(logger, "Creado Logger de Worker");
-    // Esto es solo para probar que config y logger anden, despues se borra
-    //log_info(logger, "si lo que quiero loguear abajo loggea, creo que anda todo bien esto entonces: ");
-    //log_info(logger,"el valor del alg reemplazo es: %s", algoritmo_reemplazo);
 
 }

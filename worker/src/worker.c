@@ -22,8 +22,7 @@ int main(int argc, char* argv[]) {
     char* path_config = argv[1];
     int id_actual = atoi(argv[2]);
     inicializar_worker(path_config); 
-
-    //crear_client_worker_storage(); 
+    crear_client_worker_storage(); 
     crear_client_worker_master(id_actual); 
     
     //Cerrar programa
