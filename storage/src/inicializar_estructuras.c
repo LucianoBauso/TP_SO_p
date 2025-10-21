@@ -4,7 +4,7 @@ t_log *logger;
 t_config *configStorage;
 t_config *configSuperBlock;
 
-char *puerto_escucha; // PREGUNTAR el enunciado dice int pero qcy se puede castear????
+char *puerto_escucha; 
 bool fresh_start;
 char *punto_montaje;
 int retardo_operacion;
@@ -77,10 +77,10 @@ void leer_configSuperBlock(t_config *configSuperBlock)
     BLOCK_SIZE = config_get_int_value(configSuperBlock, "BLOCK_SIZE");
 }
 
-void inicializar_storage(void)
+void inicializar_storage(char* path_config)
 {
 
-    configStorage = iniciar_config("storage.config");
+    configStorage = iniciar_config(path_config);
     leer_configStorage(configStorage);
     configSuperBlock = iniciar_config("superblock.config");
     leer_configSuperBlock(configSuperBlock);
@@ -88,7 +88,5 @@ void inicializar_storage(void)
     log_info(logger, "Creado Logger de Storage");
     log_info(logger, "Leí puerto_escucha = %s", puerto_escucha);
 
-    // Esto es solo para probar que config y logger anden, despues se borra
-    // log_info(logger, "si lo que quiero loguear abajo loggea, creo que anda todo bien esto entonces: ");
-    // log_info(logger,"el valor del punto de montaje es: %s", punto_montaje);
+
 }

@@ -11,18 +11,13 @@
 #define MENSAJE 1
 
 int main(int argc, char* argv[]) {
-
-    inicializar_storage();
-    /*
-        if (argc < 2) { // PREGUNTAR si manda a ejeutar STORAGE con parametros ¿
-        log_error(logger, "Uso: ./bin/storage <archivo_config>");
+    if (argc < 2){
+        perror("Se espera archivo de configuración"); 
         exit(EXIT_FAILURE);
     }
-    //log_info(logger, "Intentando abrir config: %s", argv[1]);
-
+    char* path_config = argv[1];
+    inicializar_storage(path_config);
     
-    */
-
    // ----------- SERVER -----------
     crear_server_storage();
     

@@ -14,9 +14,17 @@
 
 int main(int argc, char* argv[]) {
 
-    inicializar_worker();
-    crear_client_worker_master(); // ver orden 
-    crear_client_worker_storage(); // ver orden 
+    if (argc != 3) {
+        perror("Error: Se esperan exactamente dos parámetros.\n");
+        printf("Uso: %s <config> <id worker>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    char* path_config = argv[1];
+    int id_actual = atoi(argv[2]);
+    inicializar_worker(path_config); 
+    crear_client_worker_storage(); 
+    crear_client_worker_master(id_actual); 
+    
     //Cerrar programa
    
     config_destroy(config);
