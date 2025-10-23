@@ -6,12 +6,12 @@
 #include <utils/protocol.h>  
 #include <stdlib.h>
 
-#include <inicializar_estructuras.h>
-#include <crear_conexion.h>
+
 
 // Provisorio hasta usar el enum oficial de utils
 #define MENSAJE 1
 
+//worker.c
 int main(int argc, char* argv[]) {
 
     if (argc != 3) {
@@ -23,10 +23,16 @@ int main(int argc, char* argv[]) {
     int id_actual = atoi(argv[2]);
     inicializar_worker(path_config); 
     crear_client_worker_storage(); 
-    crear_client_worker_master(id_actual); 
+    int conexion_master = conectar_a_master(id_actual); 
+    enviar_ID_WORKER_a_master (conexion_master, id_actual);
+    log_info(logger, "Worker (ID: %d) listo y esperando querys...", id_actual);
+
+
+    //Lógica del modulo
     
+    activar_QI(conexion_master); //TODO: Cambiar acá los parametros y el tipo que sea necesario. 
+
     //Cerrar programa
-   
     config_destroy(config);
     log_destroy(logger);
 

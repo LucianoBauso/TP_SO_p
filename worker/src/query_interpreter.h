@@ -1,6 +1,9 @@
 #ifndef QUERY_INTERPRETER_H_
 #define QUERY_INTERPRETER_H_
 
+#include <stdbool.h>
+#include <commons/log.h>
+#include "inicializar_estructuras.h"
 typedef enum {
     IN_CREATE,
     IN_TRUNCATE,
@@ -13,5 +16,10 @@ typedef enum {
     IN_END,
     IN_INVALIDA // En caso d error
 } t_instruccion_worker;
+
+extern bool worker_activo;
+
+void ejecutar_query();
+char* recibir_operacion_master(); // TODO correjir
 
 #endif
