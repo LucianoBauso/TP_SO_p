@@ -1,9 +1,15 @@
 #pragma once
 #include <stdint.h>
+#include <stdbool.h>
 #include "storage_config.h"
 #include "fs.h"
 
-typedef enum {
+typedef struct {
+    const storage_cfg_t* cfg;
+    const superblock_t*  sb;
+} ops_ctx_t;
+
+enum {
     OP_HANDSHAKE = 1,
     OP_GET_BLOCK_SIZE,
     OP_CREATE,
@@ -13,11 +19,6 @@ typedef enum {
     OP_WRITE_BLOCK,
     OP_READ_BLOCK,
     OP_DELETE_TAG
-} opcode_t;
+};
 
-typedef struct {
-    const storage_cfg_t* cfg;
-    const superblock_t*  sb;
-} ops_ctx_t;
-
-int ops_handle_connection(int sockfd, const ops_ctx_t* ctx);
+void ops_handle_connection(int client_fd, const ops_ctx_t* ctx);

@@ -35,10 +35,7 @@ LIBS += commons
 
 OBJS_SRC = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
 
-EXTRA_SRCS := ../utils/src/protocol.c
-EXTRA_OBJS := $(EXTRA_SRCS:../utils/src/%.c=obj/utils_%.o)
-
-OBJS = $(OBJS_SRC) $(EXTRA_OBJS)
+OBJS = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
 
 OUT = $(call outname,$(NAME))
 

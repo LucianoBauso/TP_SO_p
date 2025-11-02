@@ -33,22 +33,6 @@ static void* _thread_main(void* argp) {
     return NULL;
 }
 
-static const storage_cfg_t* g_cfg_compat = NULL;
-static const superblock_t*  g_sb_compat  = NULL;
-
-void server_set_context(const storage_cfg_t* cfg, const superblock_t* sb) {
-    g_cfg_compat = cfg;
-    g_sb_compat  = sb;
-}
-
-int crear_server_storage(void) {
-    if (!g_cfg_compat || !g_sb_compat) {
-        log_error(storage_log, "crear_server_storage(): contexto no seteado. Llamá antes a server_set_context()");
-        return -1;
-    }
-    return server_listen_and_serve(g_cfg_compat, g_sb_compat);
-}
-
 int server_listen_and_serve(const storage_cfg_t* cfg, const superblock_t* sb) {
     int srv = socket(AF_INET, SOCK_STREAM, 0);
     if (srv < 0) { log_error(storage_log, "socket: %m"); return -1; }

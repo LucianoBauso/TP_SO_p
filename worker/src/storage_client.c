@@ -1,5 +1,3 @@
-//Pruebas del Storage
-
 #define _POSIX_C_SOURCE 200809L
 #include <arpa/inet.h>
 #include <netinet/in.h>
