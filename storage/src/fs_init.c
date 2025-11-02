@@ -16,7 +16,7 @@
 #include <stdlib.h>
 
 static int mkdir_p(const char* path, mode_t mode) {
-    char* tmp = string_duplicate(path);
+    char* tmp = strdup(path);
     size_t len = strlen(tmp);
     if (len == 0) { free(tmp); return 0; }
     if (tmp[len-1] == '/') tmp[len-1] = 0;

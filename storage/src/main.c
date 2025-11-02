@@ -13,8 +13,7 @@ t_log* storage_log = NULL;
 
 // commons trae log_level_from_string(); lo envolvemos por si viene NULL
 static t_log_level _level_from_cfg(const char* s) {
-    extern t_log_level log_level_from_string(const char* level);
-    return log_level_from_string(s ? s : "INFO");
+    return log_level_from_string((char*)(s ? s : "INFO"));
 }
 
 static void terminar_programa(storage_cfg_t* cfg) {

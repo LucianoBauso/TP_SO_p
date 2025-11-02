@@ -1,6 +1,5 @@
 include settings.mk
 
-################################################################################
 
 outname = bin/$(1)
 
@@ -12,63 +11,43 @@ define compile_objs
 	$(CC) $(CFLAGS) -c -o "$@" $< $(IDIRS:%=-I%)
 endef
 
-################################################################################
 
-# Project name
 NAME=$(shell pwd | xargs -I{} basename "{}")
-
-# Set compiler and archiver options
 CC=gcc
 AR=ar
 ARFLAGS=rcs
 MAKE=make --no-print-directory
 
-# Set prerrequisites
 SRCS_C += $(shell find src -iname "*.c")
 SRCS_H += $(shell find src -iname "*.h")
-SRCS_H += $(shell find include -iname "*.h")
+SRCS_H += $(shell find include -iname "*.h" 2>/dev/null)
 
 DEPS = $(foreach SHL,$(SHARED_LIBPATHS),$(SHL:%=%/lib/lib$(notdir $(SHL)).so)) \
 	$(foreach STL,$(STATIC_LIBPATHS),$(STL:%=%/lib/lib$(notdir $(STL)).a))
 
-# Set header paths to (-I)nclude
 IDIRS += $(addsuffix /src,$(SHARED_LIBPATHS) $(STATIC_LIBPATHS) .) /usr/local/include
-# >>> NUEVO: includes locales y de utils <<<
 IDIRS += include ../utils/include
 
-# Set library paths to (-L)ook
 LIBDIRS = $(addsuffix /lib,$(SHARED_LIBPATHS) $(STATIC_LIBPATHS)) /usr/local/lib
-
-# Set shared library paths to be found in runtime (-rpath)
 RUNDIRS = $(SHARED_LIBPATHS:%=$(shell pwd)/%/lib)
 
 LIBS += commons
 
-# Set intermediate objects
 OBJS_SRC = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
 
 EXTRA_SRCS := ../utils/src/protocol.c
 EXTRA_OBJS := $(EXTRA_SRCS:../utils/src/%.c=obj/utils_%.o)
 
-# Objetos finales a linkear
 OBJS = $(OBJS_SRC) $(EXTRA_OBJS)
 
-# Set output
 OUT = $(call outname,$(NAME))
 
-# Set test folder
 TESTS_DIR=tests
-
-# Set test prerrequisites
 TESTS_C += $(shell find $(TESTS_DIR)/ -iname "*.c" 2> /dev/null)
 TESTS_H += $(shell find $(TESTS_DIR)/ -iname "*.h" 2> /dev/null)
-
-# Set test intermediate objects
 TEST_OBJS = $(filter-out $(TEST_EXCLUDE), $(TESTS_C)) \
             $(patsubst src/%.c,obj/%.o,$(filter-out $(TEST_EXCLUDE), $(SRCS_C))) \
             $(EXTRA_OBJS)
-
-# Set test binary targets
 TEST = bin/$(NAME)_tests
 
 .PHONY: all
