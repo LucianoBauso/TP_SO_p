@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 static void msleep(int ms) { usleep((useconds_t)ms * 1000); }
 

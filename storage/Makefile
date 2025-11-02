@@ -48,11 +48,17 @@ LIBS += commons pthread
 OBJS_SRC = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
 
 
-EXTRA_SRCS := ../utils/src/protocol.c
-EXTRA_OBJS := $(EXTRA_SRCS:../utils/src/%.c=obj/utils_%.o)
+# headers locales también
+SRCS_H += $(shell find include -iname "*.h" 2>/dev/null)
 
-# Objetos finales a linkear
-OBJS = $(OBJS_SRC) $(EXTRA_OBJS)
+# includes para encontrar utils/include
+IDIRS += include ../utils/include
+
+# libs de commons/pthread
+LIBS += commons pthread
+
+# objetos SOLO de src/
+OBJS = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
 
 # Set output
 OUT = $(call outname,$(NAME))

@@ -11,7 +11,6 @@
 // Logger global del módulo (declarado en logger.h)
 t_log* storage_log = NULL;
 
-// commons trae log_level_from_string(); lo envolvemos por si viene NULL
 static t_log_level _level_from_cfg(const char* s) {
     return log_level_from_string((char*)(s ? s : "INFO"));
 }

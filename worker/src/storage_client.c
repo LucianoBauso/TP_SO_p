@@ -10,7 +10,18 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "protocol.h"
-#include "ops.h"
+
+enum {
+    OP_HANDSHAKE = 1,
+    OP_GET_BLOCK_SIZE,
+    OP_CREATE,
+    OP_TRUNCATE,
+    OP_TAG,
+    OP_COMMIT,
+    OP_WRITE_BLOCK,
+    OP_READ_BLOCK,
+    OP_DELETE_TAG
+};
 
 static uint32_t g_block_size = 0;
 

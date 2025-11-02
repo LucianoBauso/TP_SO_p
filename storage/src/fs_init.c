@@ -168,19 +168,23 @@ bool fs_format_fresh_start(const char* mount, const superblock_t* sb, int* err_o
     char* dst_log0  = string_from_format("%s/000000.dat", dir_logical);
     unlink(dst_log0);
     if (link(src_phys0, dst_log0) < 0) {
-        int in = open(src_phys0, O_RDONLY);
-        int out = open(dst_log0, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-        if (in < 0 || out < 0) {
-            if (err_out) *err_out = errno;
-            log_error(storage_log, "hardlink/copia del bloque 0 falló");
-            if(in>=0)close(in); if(out>=0)close(out);
-            free(src_phys0); free(dst_log0); free(dir_blocks); free(dir_files); free(dir_initial); free(dir_logical);
-            return false;
-        }
-        char buf[8192]; ssize_t r;
-        while ((r = read(in, buf, sizeof buf)) > 0) { if (!_write_all(out, buf, (size_t)r)) { if (err_out)*err_out = EIO; break; } }
-        close(in); close(out);
+    int in = open(src_phys0, O_RDONLY);
+    int out = open(dst_log0, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    if (in < 0 || out < 0) {
+        if (err_out) *err_out = errno;
+        log_error(storage_log, "hardlink/copia del bloque 0 falló");
+        if (in >= 0) close(in);
+        if (out >= 0) close(out);
+        free(src_phys0); free(dst_log0); free(dir_blocks); free(dir_files); free(dir_initial); free(dir_logical);
+        return false;
     }
+    char buf[8192]; ssize_t r;
+    while ((r = read(in, buf, sizeof buf)) > 0) {
+        if (!_write_all(out, buf, (size_t)r)) { if (err_out) *err_out = EIO; break; }
+    }
+    close(in);
+    close(out);
+}
 
     free(src_phys0); free(dst_log0);
     free(dir_blocks); free(dir_files); free(dir_initial); free(dir_logical);
