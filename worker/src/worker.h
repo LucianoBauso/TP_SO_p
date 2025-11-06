@@ -20,6 +20,6 @@ void leer_consola(t_log*);
 void paquete(int);
 void terminar_programa(int, t_log*, t_config*);
 
-void activar_QI(conexion_master); //TODO : arreglar c parametros q surjan ¿ 
+void activar_QI(int conexion_master, int conexion_storage); 
 
 #endif /* CLIENT_H_ */

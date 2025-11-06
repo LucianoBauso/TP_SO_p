@@ -1,10 +1,11 @@
 #include "crear_conexion.h"
+#include <pthread.h>
+#include <utils/protocol.h>
 
 
 void crear_server_storage() {
     int server_fd = iniciar_servidor(puerto_escucha);
     if (server_fd == -1) {
-        // ... (tu manejo de errores está perfecto) ...
         exit(EXIT_FAILURE);
     }
     log_info(logger, "Storage listo para recibir Workers en puerto %s", puerto_escucha);
@@ -62,6 +63,68 @@ void* atender_worker(void* arg) {
         log_info(logger, "[Hilo %lu] Respuesta enviada correctamente", pthread_self());
 
         free(mensaje);
+    } else if (cod_op == CREATE_FILE) {
+        int size = 0;
+        void* buffer = recibir_buffer(&size, cliente_fd);
+        
+        int offset = 0;
+        
+        int file_name_size;
+        memcpy(&file_name_size, buffer + offset, sizeof(int));
+        offset += sizeof(int);
+        
+        char* file_name = malloc(file_name_size);
+        memcpy(file_name, buffer + offset, file_name_size);
+        offset += file_name_size;
+
+        int tag_size;
+        memcpy(&tag_size, buffer + offset, sizeof(int));
+        offset += sizeof(int);
+
+        char* tag = malloc(tag_size);
+        memcpy(tag, buffer + offset, tag_size);
+
+        log_info(logger, "[Hilo %lu] CREATE_FILE received. File: %s, Tag: %s", pthread_self(), file_name, tag);
+
+        // TODO: Implementar logica del archivo de creacion
+
+        free(file_name);
+        free(tag);
+        free(buffer);
+
+    } else if (cod_op == TRUNCATE_FILE) {
+        int size = 0;
+        void* buffer = recibir_buffer(&size, cliente_fd);
+        
+        int offset = 0;
+        
+        int file_name_size;
+        memcpy(&file_name_size, buffer + offset, sizeof(int));
+        offset += sizeof(int);
+        
+        char* file_name = malloc(file_name_size);
+        memcpy(file_name, buffer + offset, file_name_size);
+        offset += file_name_size;
+
+        int tag_size;
+        memcpy(&tag_size, buffer + offset, sizeof(int));
+        offset += sizeof(int);
+
+        char* tag = malloc(tag_size);
+        memcpy(tag, buffer + offset, tag_size);
+        offset += tag_size;
+
+        int new_size;
+        memcpy(&new_size, buffer + offset, sizeof(int));
+
+        log_info(logger, "[Hilo %lu] TRUNCATE_FILE received. File: %s, Tag: %s, New Size: %d", pthread_self(), file_name, tag, new_size);
+
+        // TODO: Implementar archivo para truncarr aca
+
+        free(file_name);
+        free(tag);
+        free(buffer);
+
     } else if (cod_op == -1) {
         log_warning(logger, "[Hilo %lu] El Worker en socket %d cerró la conexión inesperadamente", pthread_self(), cliente_fd);
     } else {

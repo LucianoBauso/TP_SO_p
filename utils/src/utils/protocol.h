@@ -3,7 +3,9 @@
 
 typedef enum {
     MENSAJE = 1,
-    PAQUETE
+    PAQUETE,
+    CREATE_FILE,
+    TRUNCATE_FILE
 } op_code;
 
 #endif /* PROTOCOL_H_ */

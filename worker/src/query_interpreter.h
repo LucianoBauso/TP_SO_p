@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <commons/log.h>
 #include "inicializar_estructuras.h"
+
 typedef enum {
     IN_CREATE,
     IN_TRUNCATE,
@@ -19,7 +20,9 @@ typedef enum {
 
 extern bool worker_activo;
 
-void ejecutar_query();
+void activar_QI(int conexion_master, int conexion_storage);
+void execute_create(char* file_name, char* tag, int conexion_storage);
+void execute_truncate(char* file_name, char* tag, int size, int conexion_storage);
 char* recibir_operacion_master(); // TODO correjir
 
 #endif
