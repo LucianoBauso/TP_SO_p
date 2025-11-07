@@ -20,9 +20,12 @@ typedef enum {
 
 extern bool worker_activo;
 
+t_instruccion_worker parsear_instruccion(char* linea, char** arg1, char** arg2, char** arg3, char** arg4);
+
 void activar_QI(int conexion_master, int conexion_storage);
 void execute_create(char* file_name, char* tag, int conexion_storage);
 void execute_truncate(char* file_name, char* tag, int size, int conexion_storage);
+void execute_write(char* file_name, char* tag, int base_address, char* content, int conexion_storage);
 char* recibir_operacion_master(); // TODO correjir
 
 #endif
