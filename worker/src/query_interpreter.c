@@ -26,6 +26,11 @@ t_instruccion_worker parsear_instruccion(char* linea, char** arg1, char** arg2, 
         *arg4 = strtok(NULL, "");
         return IN_WRITE;
     }
+    if (strcmp(instruccion, "READ") == 0) {
+        *arg1 = strtok(NULL, ":");
+        *arg2 = strtok(NULL, "");
+        return IN_READ;
+    }
 
     return IN_INVALIDA;
 }
@@ -68,12 +73,24 @@ void execute_write(char* file_name, char* tag, int base_address, char* content, 
     log_info(logger, "Peticion WRITE enviada a Storage.");
 }
 
+void execute_read(char* file_name, char* tag, int conexion_storage) {
+    log_info(logger, "Ejecutando READ: %s:%s", file_name, tag);
+    t_paquete* paquete = crear_paquete();
+    paquete->codigo_operacion = READ_FILE;
+    agregar_a_paquete(paquete, file_name, strlen(file_name) + 1);
+    agregar_a_paquete(paquete, tag, strlen(tag) + 1);
+    enviar_paquete(paquete, conexion_storage);
+    eliminar_paquete(paquete);
+    log_info(logger, "Peticion READ enviada a Storage.");
+}
+
 void activar_QI(int conexion_master, int conexion_storage){
     worker_activo = true;
     while (worker_activo){
         // simulando la rececpcion de la instruccion Truncate
         // ver logica del master?
-        char* operacion_recibida = strdup("WRITE mi_archivo:mi_tag 1024 'este es el contenido'");
+        char* operacion_recibida = strdup("READ mi_archivo:mi_tag");
+// char* operacion_recibida = strdup("WRITE mi_archivo:mi_tag 1024 'este es el contenido'");
 
         if (operacion_recibida != NULL){
             char* arg1;
@@ -91,6 +108,9 @@ void activar_QI(int conexion_master, int conexion_storage){
                     break;
                 case IN_WRITE:
                     execute_write(arg1, arg2, atoi(arg3), arg4, conexion_storage);
+                    break;
+                case IN_READ:
+                    execute_read(arg1, arg2, conexion_storage);
                     break;
                 default:
                     log_warning(logger, "Invalid instruction received.");
