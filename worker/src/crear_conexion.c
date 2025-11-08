@@ -59,8 +59,6 @@ int conectar_a_master(){
         
 }
 
-
-
 void enviar_ID_WORKER_a_master(int conexion_master, int id_worker){ 
     log_info(logger,"Quiero mandarle al master el ID de este Worker: %d",id_worker);
     t_paquete* paquete = crear_paquete();
