@@ -28,17 +28,8 @@ módulo. Ejemplo:
 cd kernel
 make
 ./bin/kernel
-
-cd master
-./bin/master master
-
-cd storage
-./bin/storage
-
-cd query_control
-./bin/query_control
-
 ```
+
 ## Importar desde Visual Studio Code
 
 Para importar el workspace, debemos abrir el archivo `tp.code-workspace` desde
