@@ -26,7 +26,8 @@ void activar_QI(int conexion_master, int conexion_storage);
 void execute_create(char* file_name, char* tag, int conexion_storage);
 void execute_truncate(char* file_name, char* tag, int size, int conexion_storage);
 void execute_write(char* file_name, char* tag, int base_address, char* content, int conexion_storage);
-void execute_read(char* file_name, char* tag, int conexion_storage);
-char* recibir_operacion_master(); // TODO correjir
+void execute_read(char* file_name, char* tag, int conexion_master, int conexion_storage);
+void execute_tag(char* file_name_origen, char* tag_origen, char* file_name_destino, char* tag_destino, int conexion_storage);
+char* recibir_operacion_master(); //  correjir
 
 #endif

@@ -22,11 +22,11 @@ void crear_server_storage() {
 
         log_info(logger, "¡Se conectó un Worker! Creando un hilo para atenderlo...");
 
-        // 1. Reservamos memoria para pasar el socket de forma segura al hilo.
+        // 1. Reservar memoria para pasar el socket de forma segura al hilo.
         int* arg_cliente_fd = malloc(sizeof(int));
         *arg_cliente_fd = cliente_fd;
 
-        // 2. Creamos el hilo que ejecutará la función atender_worker.
+        // 2. Crear el hilo que ejecutará la función atender_worker.
         pthread_t hilo_worker;
         if (pthread_create(&hilo_worker, NULL, atender_worker, arg_cliente_fd) != 0) {
             log_error(logger, "Error al crear el hilo para el nuevo Worker");
@@ -86,7 +86,7 @@ void* atender_worker(void* arg) {
 
         log_info(logger, "[Hilo %lu] CREATE_FILE received. File: %s, Tag: %s", pthread_self(), file_name, tag);
 
-        // TODO: Implementar logica del archivo de creacion
+        // Implementar logica del archivo de creacion
 
         free(file_name);
         free(tag);
@@ -119,7 +119,7 @@ void* atender_worker(void* arg) {
 
         log_info(logger, "[Hilo %lu] TRUNCATE_FILE received. File: %s, Tag: %s, New Size: %d", pthread_self(), file_name, tag, new_size);
 
-        // TODO: Implementar archivo para truncarr aca
+        // Implementar archivo para truncarr aca
 
         free(file_name);
         free(tag);

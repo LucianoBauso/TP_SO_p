@@ -8,6 +8,7 @@ typedef enum {
     TRUNCATE_FILE,
     WRITE_FILE,
     READ_FILE,
+    TAG_FILE,
     FILE_CONTENT,
     READ_RESULT
 } op_code;
