@@ -26,11 +26,14 @@ MAKE=make --no-print-directory
 # Set prerrequisites
 SRCS_C += $(shell find src -iname "*.c")
 SRCS_H += $(shell find src -iname "*.h")
+SRCS_H += $(shell find include -iname "*.h")
+
 DEPS = $(foreach SHL,$(SHARED_LIBPATHS),$(SHL:%=%/lib/lib$(notdir $(SHL)).so)) \
 	$(foreach STL,$(STATIC_LIBPATHS),$(STL:%=%/lib/lib$(notdir $(STL)).a))
 
 # Set header paths to (-I)nclude
 IDIRS += $(addsuffix /src,$(SHARED_LIBPATHS) $(STATIC_LIBPATHS) .) /usr/local/include
+IDIRS += include ../utils/include
 
 # Set library paths to (-L)ook
 LIBDIRS = $(addsuffix /lib,$(SHARED_LIBPATHS) $(STATIC_LIBPATHS)) /usr/local/lib
@@ -38,7 +41,23 @@ LIBDIRS = $(addsuffix /lib,$(SHARED_LIBPATHS) $(STATIC_LIBPATHS)) /usr/local/lib
 # Set shared library paths to be found in runtime (-rpath)
 RUNDIRS = $(SHARED_LIBPATHS:%=$(shell pwd)/%/lib)
 
+LIBS += commons pthread
+
 # Set intermediate objects
+# (los de src/ siguen igual)
+OBJS_SRC = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
+
+
+# headers locales también
+SRCS_H += $(shell find include -iname "*.h" 2>/dev/null)
+
+# includes para encontrar utils/include
+IDIRS += include ../utils/include
+
+# libs de commons/pthread
+LIBS += commons pthread
+
+# objetos SOLO de src/
 OBJS = $(patsubst src/%.c,obj/%.o,$(SRCS_C))
 
 # Set output
@@ -52,7 +71,9 @@ TESTS_C += $(shell find $(TESTS_DIR)/ -iname "*.c" 2> /dev/null)
 TESTS_H += $(shell find $(TESTS_DIR)/ -iname "*.h" 2> /dev/null)
 
 # Set test intermediate objects
-TEST_OBJS = $(filter-out $(TEST_EXCLUDE), $(TESTS_C)) $(patsubst src/%.c,obj/%.o,$(filter-out $(TEST_EXCLUDE), $(SRCS_C)))
+TEST_OBJS = $(filter-out $(TEST_EXCLUDE), $(TESTS_C)) \
+            $(patsubst src/%.c,obj/%.o,$(filter-out $(TEST_EXCLUDE), $(SRCS_C))) \
+            $(EXTRA_OBJS)
 
 # Set test binary targets
 TEST = bin/$(NAME)_tests
@@ -84,6 +105,9 @@ $(TEST): $(TEST_OBJS) $(DEPS) | $(dir $(TEST))
 	$(CC) $(CFLAGS) -o "$@" $^ $(IDIRS:%=-I%) $(LIBDIRS:%=-L%) $(RUNDIRS:%=-Wl,-rpath,%) $(LIBS:%=-l%) -lcspecs
 
 obj/%.o: src/%.c $(SRCS_H) $(DEPS) | $(dir $(OBJS))
+	$(call compile_objs)
+
+obj/utils_%.o: ../utils/src/%.c $(DEPS) | $(dir $(OBJS))
 	$(call compile_objs)
 
 .SECONDEXPANSION:
