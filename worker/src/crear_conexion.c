@@ -44,20 +44,20 @@ void crear_client_worker_master(){
         }
         log_info(logger, "Conectado a Master en %s:%d", ip_master, puerto_master);
     //char * mensaje_a_enviar = strcat("Hola Master mi id es: ", )
-    enviar_mensaje("hola master, mi id es: *inserte id *", conexion_storage);
+    enviar_mensaje("hola master, mi id es: *inserte id *", conexion_master);
 
     // Recibir respuesta
-    int cod_op = recibir_operacion(conexion_storage);
+    int cod_op = recibir_operacion(conexion_master);
     if (cod_op == MENSAJE) {
         int size = 0;
-        //char* respuesta = recibir_buffer(&size, conexion_storage);
+        //char* respuesta = recibir_buffer(&size, conexion_master);
         //log_info(logger, "Respuesta del Storage: %s", respuesta);
-        int* respuesta = recibir_buffer(&size, conexion_storage);
+        int* respuesta = recibir_buffer(&size, conexion_master);
         log_info(logger, "Respuesta del Storage: %d", *respuesta);
         free(respuesta);
     } else {
         log_error(logger, "Operación desconocida recibida: %d", cod_op);
     }
-     liberar_conexion(conexion_storage);
+     liberar_conexion(conexion_master);
 
 }
