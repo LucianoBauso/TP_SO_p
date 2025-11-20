@@ -43,10 +43,23 @@ int conectar_a_master(){
             //return EXIT_FAILURE;
             abort();
         }
-        log_info(logger, "Conectado a Master en %s:%s", ip_master, puerto_master);
-        return conexion_master;
-}
+        log_info(logger, "Conectado a Master en %s:%d", ip_master, puerto_master);
+    //char * mensaje_a_enviar = strcat("Hola Master mi id es: ", )
+    enviar_mensaje("hola master, mi id es: *inserte id *", conexion_master);
 
+    // Recibir respuesta
+    int cod_op = recibir_operacion(conexion_master);
+    if (cod_op == MENSAJE) {
+        int size = 0;
+        //char* respuesta = recibir_buffer(&size, conexion_master);
+        //log_info(logger, "Respuesta del Storage: %s", respuesta);
+        int* respuesta = recibir_buffer(&size, conexion_master);
+        log_info(logger, "Respuesta del Storage: %d", *respuesta);
+        free(respuesta);
+    } else {
+        log_error(logger, "Operación desconocida recibida: %d", cod_op);
+    }
+     liberar_conexion(conexion_master);
 
 void enviar_pedido_BLOCKSIZE_a_storage(int conexion_storage){
     log_info(logger, "Preguntando a Storage el tamaño de los bloques");
