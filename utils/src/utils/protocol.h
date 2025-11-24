@@ -10,7 +10,9 @@ typedef enum {
     READ_FILE,
     TAG_FILE,
     FILE_CONTENT,
-    READ_RESULT
+    READ_RESULT,
+    EXECUTE_QUERY,
+    COMMIT_FILE
 } op_code;
 
 #endif /* PROTOCOL_H_ */
