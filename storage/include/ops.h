@@ -18,7 +18,8 @@ enum {
     OP_COMMIT,
     OP_WRITE_BLOCK,
     OP_READ_BLOCK,
-    OP_DELETE_TAG
+    OP_DELETE_TAG,
+    OP_FLUSH
 };
 
 void ops_handle_connection(int client_fd, const ops_ctx_t* ctx);

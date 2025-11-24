@@ -101,6 +101,7 @@ void ops_handle_connection(int client_fd, const ops_ctx_t* ctx) {
             case OP_COMMIT:
             case OP_WRITE_BLOCK:
             case OP_DELETE_TAG:
+            case OP_FLUSH:
                 rc = _handle_simple_ok(client_fd, op, ctx);
                 break;
             default:

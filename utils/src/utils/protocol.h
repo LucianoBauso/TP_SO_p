@@ -12,7 +12,8 @@ typedef enum {
     FILE_CONTENT,
     READ_RESULT,
     EXECUTE_QUERY,
-    COMMIT_FILE
+    COMMIT_FILE,
+    FLUSH_FILE
 } op_code;
 
 #endif /* PROTOCOL_H_ */
