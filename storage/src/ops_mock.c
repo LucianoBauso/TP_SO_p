@@ -72,6 +72,23 @@ static int _handle_simple_ok(int fd, uint32_t opcode, const ops_ctx_t* ctx) {
     return _send_status(fd, opcode, 0);
 }
 
+static int _handle_delete_tag(int fd, const ops_ctx_t* ctx, const void* payload, uint32_t len) {
+    log_debug(storage_log, "DELETE_TAG len=%u", len);
+
+    char* file_name = (char*)payload;
+    size_t file_name_len = strlen(file_name);
+    if (file_name_len + 1 >= len) {
+        log_warning(storage_log, "DELETE_TAG payload inválido (sin tag)");
+        return _send_status(fd, OP_DELETE_TAG, 1);
+    }
+    char* tag = (char*)payload + file_name_len + 1;
+
+    log_info(storage_log, "DELETE_TAG: %s:%s", file_name, tag);
+
+    msleep(ctx->cfg->retardo_operacion_ms);
+    return _send_status(fd, OP_DELETE_TAG, 0);
+}
+
 void ops_handle_connection(int client_fd, const ops_ctx_t* ctx) {
     for (;;) {
         uint32_t op=0, len=0;
@@ -100,7 +117,11 @@ void ops_handle_connection(int client_fd, const ops_ctx_t* ctx) {
             case OP_TAG:
             case OP_COMMIT:
             case OP_WRITE_BLOCK:
+                rc = _handle_simple_ok(client_fd, op, ctx);
+                break;
             case OP_DELETE_TAG:
+                rc = _handle_delete_tag(client_fd, ctx, payload, len);
+                break;
             case OP_FLUSH:
                 rc = _handle_simple_ok(client_fd, op, ctx);
                 break;
