@@ -14,7 +14,9 @@ typedef enum {
     EXECUTE_QUERY,
     COMMIT_FILE,
     FLUSH_FILE,
-    DELETE_FILE
+    DELETE_FILE,
+    QUERY_OK,
+    QUERY_FINISHED
 } op_code;
 
 #endif /* PROTOCOL_H_ */

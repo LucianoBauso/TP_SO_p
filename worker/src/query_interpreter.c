@@ -18,6 +18,7 @@ typedef enum {
     IN_COMMIT,
     IN_FLUSH,
     IN_DELETE,
+    IN_END,
     IN_INVALIDA
 } t_instruccion_worker;
 
@@ -27,6 +28,7 @@ char* get_line(FILE* file, int line_number);
 void execute_commit(char* file_name, char* tag, int conexion_storage);
 void execute_flush(char* file_name, char* tag, int conexion_storage);
 void execute_delete(char* file_name, char* tag, int conexion_storage);
+void execute_end(int conexion_master);
 
 t_instruccion_worker parsear_instruccion(char* linea, char** arg1, char** arg2, char** arg3, char** arg4) {
     char* instruccion = strtok(linea, " ");
@@ -70,10 +72,13 @@ t_instruccion_worker parsear_instruccion(char* linea, char** arg1, char** arg2, 
         *arg2 = strtok(NULL, "");
         return IN_FLUSH;
     }
-    if (strcmp(instruccion, "DELETE") == 0) {
+    if (strcmp(instruccion, "DELETE") == 0) {.
         *arg1 = strtok(NULL, ":");
         *arg2 = strtok(NULL, "");
         return IN_DELETE;
+    }
+    if (strcmp(instruccion, "END") == 0) {
+        return IN_END;
     }
 
     return IN_INVALIDA;
@@ -158,7 +163,6 @@ void execute_read(char* file_name, char* tag, int conexion_master, int conexion_
         free(buffer);
     } else {
         log_error(logger, "Error al recibir datos de Storage para READ. Codigo de operacion: %d", op);
-        // TODO: Informar error a Master.
     }
 }
 
@@ -209,6 +213,16 @@ void execute_delete(char* file_name, char* tag, int conexion_storage) {
     log_info(logger, "Peticion DELETE enviada a Storage.");
 }
 
+void execute_end(int conexion_master) {
+    log_info(logger, "Ejecutando END: Informando a Master.");
+    t_paquete* paquete = crear_paquete();
+    paquete->codigo_operacion = QUERY_FINISHED;
+    // No es necesario enviar payload, el codigo de operacion es suficiente.
+    enviar_paquete(paquete, conexion_master);
+    eliminar_paquete(paquete);
+    log_info(logger, "Fin de query =)");
+}
+
 void activar_QI(int conexion_master, int conexion_storage) {
     worker_activo = true;
     while (worker_activo) {
@@ -245,7 +259,6 @@ void procesar_query(char* query_path, int pc, int conexion_master, int conexion_
     FILE* query_file = fopen(full_path, "r");
     if (query_file == NULL) {
         log_error(logger, "No se pudo abrir el archivo de query: %s", full_path);
-        // TODO: Informar error a Master
         return;
     }
 
@@ -286,17 +299,27 @@ void procesar_query(char* query_path, int pc, int conexion_master, int conexion_
             case IN_DELETE:
                 execute_delete(arg1, arg2, conexion_storage);
                 break;
+            case IN_END:
+                execute_end(conexion_master);
+                free(linea_copy);
+                free(linea);
+                return;
             default:
                 log_warning(logger, "Instruccion invalida en linea %d: %s", pc, linea);
-                // TODO: Informar error a Master
+
                 break;
         }
         free(linea_copy);
         free(linea);
-        // TODO: Informar éxito a Master
+        
+        t_paquete* paquete = crear_paquete();
+        paquete->codigo_operacion = QUERY_OK;
+        enviar_paquete(paquete, conexion_master);
+        eliminar_paquete(paquete);
+        log_info(logger, "Notificacion de exito de instruccion enviada a Master.");
+
     } else {
         log_error(logger, "No se pudo leer la linea %d del archivo %s", pc, full_path);
-        // TODO: Informar error a Master
     }
 }
 
@@ -309,7 +332,6 @@ char* get_line(FILE* file, int line_number) {
     while ((read = getline(&line, &len, file)) != -1) {
         current_line++;
         if (current_line == line_number) {
-            // Remover newline al final si existe
             if (line[read - 1] == '\n') {
                 line[read - 1] = '\0';
             }
@@ -318,5 +340,5 @@ char* get_line(FILE* file, int line_number) {
     }
 
     free(line);
-    return NULL; // No se encontró la línea
+    return NULL; 
 }
