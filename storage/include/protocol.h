@@ -1,9 +1,15 @@
-#pragma once
-#include <stdint.h>
-#include <stddef.h>
+#ifndef PROTOCOL_H_
+#define PROTOCOL_H_
 
-int proto_send_frame(int fd, uint32_t opcode, const void* payload, uint32_t length);
-int proto_recv_frame(int fd, uint32_t* opcode, void** payload, uint32_t* length);
+typedef enum {
+    MENSAJE = 1,
+    PAQUETE = 2,
 
-int proto_send_u32(int fd, uint32_t opcode, uint32_t value);
-int proto_recv_u32_payload(int fd, uint32_t* value_out);
+    OP_STORAGE_HANDSHAKE = 10,
+    OP_STORAGE_CREATE = 11,
+    OP_STORAGE_TRUNCATE = 12,
+    OP_STORAGE_READ_BLOCK = 13,
+    OP_STORAGE_WRITE_BLOCK = 14
+} op_code;
+
+#endif
