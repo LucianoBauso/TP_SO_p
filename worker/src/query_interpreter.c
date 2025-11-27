@@ -72,7 +72,7 @@ t_instruccion_worker parsear_instruccion(char* linea, char** arg1, char** arg2, 
         *arg2 = strtok(NULL, "");
         return IN_FLUSH;
     }
-    if (strcmp(instruccion, "DELETE") == 0) {.
+    if (strcmp(instruccion, "DELETE") == 0) {
         *arg1 = strtok(NULL, ":");
         *arg2 = strtok(NULL, "");
         return IN_DELETE;
