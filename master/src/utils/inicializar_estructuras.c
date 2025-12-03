@@ -1,4 +1,5 @@
 #include "inicializar_estructuras.h"
+#include "../state/estado_master.h"
 
 t_log* logger;
 t_config* config;
@@ -51,6 +52,10 @@ void inicializar_master(void) {
     config = iniciar_configuracion("master.config");
     leer_configuracion_master(config);
     logger = iniciar_logger();
+    
+    // Configurar algoritmo de planificación
+    configurar_algoritmo_planificacion(algoritmo_planificacion);
+    
     log_info(logger, "Logger de Master creado");
     log_info(logger, "Puerto de escucha configurado: %s", puerto_escucha);
     log_info(logger, "Algoritmo de planificación: %s", algoritmo_planificacion);

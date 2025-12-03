@@ -10,11 +10,22 @@ pthread_mutex_t MUTEX_QUERY_CONTROL = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t MUTEX_READY         = PTHREAD_MUTEX_INITIALIZER;
 
 int PROXIMO_QUERY_ID = 0;
+e_algoritmo_planificacion ALGORITMO_ACTUAL = ALGO_FIFO; //Valor por defecto, en tiempo de ejecucion puede cambiar segun la config
 
 void inicializar_estado_master(void) {
     CONEXIONES_QUERY_CONTROL = list_create();
     COLA_READY               = list_create();
     LISTA_EXEC               = list_create();
+}
+
+void configurar_algoritmo_planificacion(const char* algoritmo_str) {
+    if (strcmp(algoritmo_str, "FIFO") == 0) {
+        ALGORITMO_ACTUAL = ALGO_FIFO;
+    } else if (strcmp(algoritmo_str, "PRIORIDAD") == 0) {
+        ALGORITMO_ACTUAL = ALGO_PRIORIDAD;
+    } else {
+        ALGORITMO_ACTUAL = ALGO_FIFO; // Default
+    }
 }
 
 static t_conexion_query_control* _buscar_conexion_por_socket(int socket_query_control) {
@@ -43,7 +54,35 @@ t_query* crear_query(int socket_query_control, const char* path_query, int prior
 
 void encolar_en_ready(t_query* query) {
     pthread_mutex_lock(&MUTEX_READY);
-    list_add(COLA_READY, query);
+    
+    switch(ALGORITMO_ACTUAL) {
+        case ALGO_FIFO:
+            // FIFO: agregar al final
+            list_add(COLA_READY, query);
+            break;
+            
+        case ALGO_PRIORIDAD:
+            // Prioridad: insertar en posición correcta
+            // Mayor prioridad = menor número (1 es más prioritario que 10)
+            {
+                int posicion = 0;
+                for (int i = 0; i < list_size(COLA_READY); i++) {
+                    t_query* q_actual = list_get(COLA_READY, i);
+                    if (query->prioridad < q_actual->prioridad) {
+                        posicion = i;
+                        break;
+                    }
+                    posicion = i + 1;
+                }
+                list_add_in_index(COLA_READY, posicion, query);
+            }
+            break;
+            
+        default:
+            list_add(COLA_READY, query);
+            break;
+    }
+    
     pthread_mutex_unlock(&MUTEX_READY);
 }
 
@@ -52,6 +91,23 @@ int cantidad_en_ready(void) {
     int cantidad = list_size(COLA_READY);
     pthread_mutex_unlock(&MUTEX_READY);
     return cantidad;
+}
+
+t_query* obtener_proxima_query_ready(void) {
+    t_query* q = NULL;
+    pthread_mutex_lock(&MUTEX_READY);
+    
+    if (list_size(COLA_READY) > 0) {
+        // En todos los algoritmos tomamos el primero porque ya está ordenado
+        q = list_remove(COLA_READY, 0);
+        if (q) {
+            q->estado = QUERY_EXEC;
+            list_add(LISTA_EXEC, q);
+        }
+    }
+    
+    pthread_mutex_unlock(&MUTEX_READY);
+    return q;
 }
 
 void asociar_query_a_conexion(int socket_query_control, t_query* query) {

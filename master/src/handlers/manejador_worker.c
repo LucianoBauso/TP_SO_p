@@ -75,47 +75,10 @@ static t_worker *_tomar_worker_libre(void)
     return freew;
 }
 
-// Aux: saca una query de READY (FIFO) o NULL
-static t_query *_obtener_proxima_query_ready(void)
-{
-    t_query *q = NULL;
-    pthread_mutex_lock(&MUTEX_READY);
-    if (list_size(COLA_READY) > 0)
-    {
-        q = list_remove(COLA_READY, 0);
-        if (q)
-            q->estado = QUERY_EXEC;
-        // La moveremos a LISTA_EXEC
-        if (q)
-            list_add(LISTA_EXEC, q);
-    }
-    pthread_mutex_unlock(&MUTEX_READY);
-    return q;
-}
-
-static int _enviar_asignacion_al_worker(t_worker *w, t_query *q)
-{
-    // Enviar al Worker: PAQUETE con [query_id, path_query, prioridad]
-    t_paquete* paquete = crear_paquete();
-    paquete->codigo_operacion = PAQUETE;
-    char idbuf[32], priobuf[32];
-    snprintf(idbuf, sizeof idbuf, "%d", q->query_id);
-    snprintf(priobuf, sizeof priobuf, "%d", q->prioridad);
-
-    agregar_a_paquete(paquete, idbuf, strlen(idbuf) + 1);        // [0] query_id
-    agregar_a_paquete(paquete, q->path_query, strlen(q->path_query) + 1); // [1] path_query
-    agregar_a_paquete(paquete, priobuf, strlen(priobuf) + 1);    // [2] prioridad
-
-    enviar_paquete(paquete, w->socket_worker);
-    eliminar_paquete(paquete);
-
-    return 0; // enviar_paquete no retorna valor, asumimos éxito
-}
-
 void planificador_intentar_despachar(void)
 {
     // Tomamos una query READY y un worker libre; si cualquiera falta, no hacemos nada.
-    t_query *q = _obtener_proxima_query_ready();
+    t_query *q = obtener_proxima_query_ready();
     if (!q)
         return;
 
