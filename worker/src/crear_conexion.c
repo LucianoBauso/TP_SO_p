@@ -33,7 +33,15 @@ void crear_client_worker_storage(){
 
 }
 
+void enviar_pedido_BLOCKSIZE_a_storage(int conexion_storage){
+    log_info(logger, "Preguntando a Storage el tamaño de los bloques");
+    enviar_mensaje("Hola storage, cual es el tamaño del bloque?", conexion_storage);
+    log_info(logger, "Pregunta enviada a Storage");
 
+}
+
+//Crea la conexión Y LE MANDA EL TIPO DE CLIENTE A MASTER!!!!
+//Retorna el socket de la conexion.
 int conectar_a_master(){ 
     int conexion_master = crear_conexion(ip_master, puerto_master, "MASTER");
         if (conexion_master == -1) {
@@ -44,15 +52,11 @@ int conectar_a_master(){
             abort();
         }
         log_info(logger, "Conectado a Master en %s:%s", ip_master, puerto_master);
+        int tipo_cliente = 1; 
+        send(conexion_master, &tipo_cliente, sizeof(tipo_cliente), 0);
+
         return conexion_master;
-}
-
-
-void enviar_pedido_BLOCKSIZE_a_storage(int conexion_storage){
-    log_info(logger, "Preguntando a Storage el tamaño de los bloques");
-    enviar_mensaje("Hola storage, cual es el tamaño del bloque?", conexion_storage);
-    log_info(logger, "Pregunta enviada a Storage");
-
+        
 }
 
 void enviar_ID_WORKER_a_master(int conexion_master, int id_worker){ 
@@ -66,18 +70,3 @@ void enviar_ID_WORKER_a_master(int conexion_master, int id_worker){
 
 }
 
-
-
-//En este caso lo que vamos a mandar es el ID del worker, que es lo que pide el check 1 ;)
-void crear_client_worker_master(int id){ 
-    
-
-    int conexion = conectar_a_master();
-    int tipo_cliente = 1; 
-    send(conexion, &tipo_cliente, sizeof(tipo_cliente), 0);
-
-    enviar_ID_WORKER_a_master(conexion,id);
-
-    liberar_conexion(conexion);
-    log_info(logger, "Conexión con Master cerrada");
-}

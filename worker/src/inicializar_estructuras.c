@@ -48,7 +48,6 @@ void leer_config(t_config* config){
     log_level= log_level_from_string(config_get_string_value(config, "LOG_LEVEL"));
 }
 
-
 void inicializar_worker(char* path_config){
 
     config = iniciar_config(path_config); 

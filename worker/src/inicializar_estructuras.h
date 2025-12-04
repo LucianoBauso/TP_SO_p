@@ -14,6 +14,10 @@ extern char* puerto_storage;
 extern char * ip_master;
 extern char* puerto_master;
 
+extern int retardo_memoria;
+extern char* path_queries;
+
+
 
 //-------------prototipos de funciones
 t_log* iniciar_logger(void);

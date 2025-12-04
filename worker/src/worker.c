@@ -6,12 +6,10 @@
 #include <utils/protocol.h>  
 #include <stdlib.h>
 
-#include <inicializar_estructuras.h>
-#include <crear_conexion.h>
-
 // Provisorio hasta usar el enum oficial de utils
 #define MENSAJE 1
 
+//worker.c
 int main(int argc, char* argv[]) {
 
     if (argc != 3) {
@@ -22,11 +20,32 @@ int main(int argc, char* argv[]) {
     char* path_config = argv[1];
     int id_actual = atoi(argv[2]);
     inicializar_worker(path_config); 
-    crear_client_worker_storage(); 
-    crear_client_worker_master(id_actual); 
+
+    int conexion_storage = conectar_a_storage();
+    enviar_pedido_BLOCKSIZE_a_storage(conexion_storage);
     
+    // Recibir respuesta
+    int cod_op = recibir_operacion(conexion_storage);
+    if (cod_op == MENSAJE) {
+        int size = 0;
+        int* respuesta = recibir_buffer(&size, conexion_storage);
+        log_info(logger, "Respuesta del Storage: %d", *respuesta);
+        free(respuesta);
+    } else {
+        log_error(logger, "Operación desconocida recibida: %d", cod_op);
+    }
+
+    int conexion_master = conectar_a_master(id_actual); 
+    enviar_ID_WORKER_a_master (conexion_master, id_actual);
+    log_info(logger, "Worker (ID: %d) listo y esperando querys...", id_actual);
+
+
+    //Lógica del modulo
+    
+    activar_QI(conexion_master, conexion_storage); 
+
     //Cerrar programa
-   
+    liberar_conexion(conexion_storage);
     config_destroy(config);
     log_destroy(logger);
 

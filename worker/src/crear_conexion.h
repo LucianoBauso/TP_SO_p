@@ -6,7 +6,7 @@
 #include <utils/clientUtils.h>
 #include <inicializar_estructuras.h>
 
-void crear_client_worker_master(int id);
+
 void crear_client_worker_storage(void);
 
 int conectar_a_master();
