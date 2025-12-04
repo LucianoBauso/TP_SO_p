@@ -39,27 +39,20 @@ void crear_server_storage(void) {
             continue;
         }
 
-        pthread_t hilo;
-        int* arg = malloc(sizeof(int));
-        *arg = cliente_fd;
-
-        if (pthread_create(&hilo, NULL, atender_worker, arg) != 0) {
-            perror("pthread_create");
-            close(cliente_fd);
-            free(arg);
         // 1. Reservar memoria para pasar el socket de forma segura al hilo.
         int* arg_cliente_fd = malloc(sizeof(int));
         *arg_cliente_fd = cliente_fd;
+        }
 
         // 2. Crear el hilo que ejecutará la función atender_worker.
         pthread_t hilo_worker;
+        
         if (pthread_create(&hilo_worker, NULL, atender_worker, arg_cliente_fd) != 0) {
             log_error(logger, "Error al crear el hilo para el nuevo Worker");
             free(arg_cliente_fd); // Si falla, liberamos la memoria nosotros.
             continue;
         }
         pthread_detach(hilo);
-    }
 }
 
 void* atender_worker(void* arg) {
