@@ -65,7 +65,7 @@ static void bitmap_inicializar_fresh_start() {
     void* data = calloc(bytes_bitmap, 1);
     bitmap = bitarray_create_with_mode(data, bytes_bitmap, LSB_FIRST);
 
-    // Bloque 0 reservado (initial_file)
+    // Bloque 0 reservado para el primer file
     bitarray_set_bit(bitmap, 0);
 
     bitmap_persistir();
@@ -101,7 +101,7 @@ static int reservar_bloque_fisico(int query_id) {
 }
 
 static void liberar_bloque_fisico(int nro_bloque, int query_id) {
-    if (nro_bloque <= 0 || nro_bloque >= cant_bloques) return; // nunca liberamos bloque 0
+    if (nro_bloque <= 0 || nro_bloque >= cant_bloques) return; // bloque 0 reservado
 
     if (bitarray_test_bit(bitmap, nro_bloque)) {
         bitarray_clean_bit(bitmap, nro_bloque);
@@ -234,7 +234,7 @@ static void crear_blocks_y_files_dirs() {
 }
 
 static void limpiar_fs_previo() {
-    // Implementación simple usando rm -rf sobre las estructuras del FS
+
     char* cmd = string_from_format("rm -rf '%s/bitmap.bin' '%s/blocks_hash_index.config' '%s/physical_blocks' '%s/files'",
                                   punto_montaje, punto_montaje, punto_montaje, punto_montaje);
     int res = system(cmd);
@@ -254,7 +254,7 @@ static void crear_archivo_blocks_hash_index() {
 }
 
 static void crear_archivos_blocks() {
-    // Creamos todos los bloques físicos con tamaño fijo
+
     void* buffer_cero = calloc(BLOCK_SIZE, 1);
     void* buffer_cero_char = malloc(BLOCK_SIZE);
     memset(buffer_cero_char, '0', BLOCK_SIZE);
@@ -282,7 +282,6 @@ static void crear_archivos_blocks() {
 }
 
 static void crear_initial_file() {
-    // /files/initial_file/BASE
     char* file_dir = fs_path_join(path_files_dir, "initial_file");
     char* tag_dir = fs_path_join(file_dir, "BASE");
     char* logical_dir = fs_path_join(tag_dir, "logical_blocks");
@@ -291,7 +290,6 @@ static void crear_initial_file() {
     crear_directorio_si_no_existe(tag_dir);
     crear_directorio_si_no_existe(logical_dir);
 
-    // metadata.config
     char* meta_path = fs_path_join(tag_dir, "metadata.config");
     FILE* meta = fopen(meta_path, "w");
     if (!meta) {
@@ -322,10 +320,8 @@ static void crear_initial_file() {
 }
 
 void fs_inicializar(void) {
-    // Calculamos cantidad de bloques
     cant_bloques = FS_SIZE / BLOCK_SIZE;
 
-    // Armamos paths base
     path_bitmap = fs_path_join(punto_montaje, "bitmap.bin");
     path_hash_index = fs_path_join(punto_montaje, "blocks_hash_index.config");
     path_blocks_dir = fs_path_join(punto_montaje, "physical_blocks");
@@ -429,7 +425,6 @@ fs_result_t fs_truncar(const char* file, const char* tag, uint32_t nuevo_tamanio
         bloques_actuales = realloc(bloques_actuales, sizeof(int) * bloques_nuevos_cant);
         for (int i = bloques_actuales_cant; i < bloques_nuevos_cant; i++) {
             bloques_actuales[i] = 0; // apuntan al bloque físico 0
-            // Crear hard link lógico -> físico 0
             char* logical_path = path_logical_block(file, tag, i);
             char* physical_path = path_physical_block(0);
             if (link(physical_path, logical_path) == -1) {
@@ -458,11 +453,10 @@ fs_result_t fs_truncar(const char* file, const char* tag, uint32_t nuevo_tamanio
             }
             free(logical_path);
 
-            // Si nadie más referencia al bloque físico -> lo liberamos
             char* physical_path = path_physical_block(bloque_fisico);
             struct stat st;
             if (stat(physical_path, &st) == 0) {
-                if (st.st_nlink == 1) { // sólo el archivo físico
+                if (st.st_nlink == 1) {
                     liberar_bloque_fisico(bloque_fisico, query_id);
                 }
             }
@@ -470,7 +464,6 @@ fs_result_t fs_truncar(const char* file, const char* tag, uint32_t nuevo_tamanio
         }
     }
 
-    // Actualizamos metadata
     if (bloques_nuevos_cant == 0) {
         free(bloques_actuales);
         bloques_actuales = NULL;
@@ -521,7 +514,6 @@ fs_result_t fs_leer_bloque(const char* file, const char* tag, uint32_t nro_bloqu
     size_t leidos = fread(buffer_out, 1, BLOCK_SIZE, f);
     fclose(f);
     if (leidos < (size_t)BLOCK_SIZE) {
-        // rellenamos con ceros el resto
         memset((char*)buffer_out + leidos, 0, BLOCK_SIZE - leidos);
     }
 
@@ -584,7 +576,6 @@ fs_result_t fs_escribir_bloque(const char* file, const char* tag, uint32_t nro_b
 
         char* nueva_ruta_fisica = path_physical_block(nuevo_bloque_fisico);
 
-        // Actualizamos hard link lógico
         char* logical_path = path_logical_block(file, tag, nro_bloque_logico);
         if (unlink(logical_path) == -1) {
             log_error(logger, "Error eliminando hard link anterior %s: %s", logical_path, strerror(errno));
@@ -601,7 +592,6 @@ fs_result_t fs_escribir_bloque(const char* file, const char* tag, uint32_t nro_b
                      query_id, file, tag, nro_bloque_logico, nuevo_bloque_fisico);
         }
 
-        // Liberamos el bloque físico viejo si ya no tiene referencias lógicas
         if (stat(physical_path, &st) == 0 && st.st_nlink == 1) {
             liberar_bloque_fisico(bloque_fisico_actual, query_id);
         }
@@ -612,7 +602,6 @@ fs_result_t fs_escribir_bloque(const char* file, const char* tag, uint32_t nro_b
         free(logical_path);
     }
 
-    // Escribimos el contenido en el bloque físico
     FILE* f = fopen(physical_path, "rb+");
     if (!f) {
         log_error(logger, "No se pudo abrir bloque físico %s para escritura", physical_path);
@@ -626,7 +615,6 @@ fs_result_t fs_escribir_bloque(const char* file, const char* tag, uint32_t nro_b
     fflush(f);
     fclose(f);
 
-    // Guardamos la nueva lista de bloques (por si se reasignó el físico)
     escribir_lista_bloques(metadata, bloques, cant_bloques);
     metadata_guardar_y_cerrar(metadata);
 
