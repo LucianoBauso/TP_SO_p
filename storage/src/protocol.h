@@ -1,7 +1,4 @@
-#ifndef PROTOCOL_H_
-#define PROTOCOL_H_
-
-typedef enum {
+/*typedef enum {
     MENSAJE = 1,
     PAQUETE = 2,
 
@@ -10,6 +7,4 @@ typedef enum {
     OP_STORAGE_TRUNCATE = 12,
     OP_STORAGE_READ_BLOCK = 13,
     OP_STORAGE_WRITE_BLOCK = 14
-} op_code;
-
-#endif
+} op_code;*/

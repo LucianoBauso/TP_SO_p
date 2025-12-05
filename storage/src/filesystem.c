@@ -469,7 +469,10 @@ fs_result_t fs_truncar(const char* file, const char* tag, uint32_t nuevo_tamanio
         bloques_actuales = NULL;
     }
 
-    config_set_int_value(metadata, "TAMAÑO", nuevo_tamanio);
+    char* size_str = string_from_format("%u", nuevo_tamanio);
+    config_set_value(metadata, "TAMAÑO", size_str);
+    free(size_str);
+
     escribir_lista_bloques(metadata, bloques_actuales, bloques_nuevos_cant);
 
     metadata_guardar_y_cerrar(metadata);

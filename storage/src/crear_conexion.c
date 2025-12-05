@@ -1,6 +1,6 @@
 #include "crear_conexion.h"
 #include <pthread.h>
-#include <utils/protocol.h>
+#include "protocol.h"
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+t_log* storage_log = NULL;
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Uso: %s <ruta-storage.config>\n", argv[0]);

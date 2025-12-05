@@ -43,7 +43,15 @@ t_config* iniciar_config(char* path)
 void leer_configStorage(t_config* configuracion)
 {
     puerto_escucha = config_get_string_value(configuracion, "PUERTO_ESCUCHA");
-    fresh_start = config_get_bool_value(configuracion, "FRESH_START");
+    char* fresh_value = config_get_string_value(configuracion, "FRESH_START");
+    if (fresh_value == NULL) {
+        fresh_start = false;
+    } else {
+        fresh_start =
+            string_equals_ignore_case(fresh_value, "TRUE") ||
+            string_equals_ignore_case(fresh_value, "1");
+    }
+
     punto_montaje = config_get_string_value(configuracion, "PUNTO_MONTAJE");
     retardo_operacion = config_get_int_value(configuracion, "RETARDO_OPERACION");
     retardo_acceso_bloque = config_get_int_value(configuracion, "RETARDO_ACCESO_BLOQUE");

@@ -1,4 +1,4 @@
-#include "inicializar_estructuras.h"
+/*#include "inicializar_estructuras.h"
 
 t_log *logger;
 t_config *configStorage;
@@ -25,7 +25,7 @@ t_log *iniciar_logger(void)
 
     return nuevo_logger;
 }
-/*Creacion de storage.config*/
+/*Creacion de storage.config*//*
 t_config *iniciar_config(char *path)
 {
     t_config *nuevo_config = config_create(path);
@@ -89,4 +89,4 @@ void inicializar_storage(char* path_config)
     log_info(logger, "Leí puerto_escucha = %s", puerto_escucha);
 
 
-}
+}*/

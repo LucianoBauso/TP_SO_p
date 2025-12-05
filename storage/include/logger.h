@@ -1,4 +1,5 @@
 #pragma once
 #include <commons/log.h>
+#include "inicializar_estructuras.h"
 
-extern t_log* storage_log;
+#define storage_log logger
