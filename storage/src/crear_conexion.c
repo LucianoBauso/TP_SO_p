@@ -41,19 +41,27 @@ void crear_server_storage(void) {
 
         // 1. Reservar memoria para pasar el socket de forma segura al hilo.
         int* arg_cliente_fd = malloc(sizeof(int));
-        *arg_cliente_fd = cliente_fd;
+        if (arg_cliente_fd == NULL) {
+            log_error(logger, "malloc falló al reservar arg_cliente_fd");
+            close(cliente_fd);
+            continue;
         }
+        *arg_cliente_fd = cliente_fd;
 
         // 2. Crear el hilo que ejecutará la función atender_worker.
         pthread_t hilo_worker;
-        
         if (pthread_create(&hilo_worker, NULL, atender_worker, arg_cliente_fd) != 0) {
             log_error(logger, "Error al crear el hilo para el nuevo Worker");
             free(arg_cliente_fd); // Si falla, liberamos la memoria nosotros.
+            close(cliente_fd);
             continue;
         }
-        pthread_detach(hilo);
+
+        // 3. Detach: no vamos a hacer join, el hilo se limpia solo al terminar.
+        pthread_detach(hilo_worker);
+    }
 }
+
 
 void* atender_worker(void* arg) {
     int cliente_fd = *(int*)arg;
@@ -62,11 +70,14 @@ void* atender_worker(void* arg) {
     pthread_mutex_lock(&mutex_workers);
     cantidad_workers++;
     int worker_id = cantidad_workers;
-    log_info(logger, "Se conecta un Worker (id interno %d). Cantidad de Workers conectados: %d", worker_id, cantidad_workers);
+    log_info(logger, "Se conecta un Worker (id interno %d). Cantidad de Workers conectados: %d",
+             worker_id, cantidad_workers);
     pthread_mutex_unlock(&mutex_workers);
 
     bool seguir = true;
+
     while (seguir) {
+
         int cod_op = recibir_operacion(cliente_fd);
         if (cod_op == -1) {
             log_warning(logger, "[Worker %d] Cerró la conexión", worker_id);
@@ -74,15 +85,16 @@ void* atender_worker(void* arg) {
         }
 
         switch (cod_op) {
+
         case MENSAJE:
         case OP_STORAGE_HANDSHAKE: {
-            // Handshake: el Worker quiere saber el BLOCK_SIZE
             int size = 0;
-            void* buffer = recibir_buffer(&size, cliente_fd); // descartamos el contenido
+            void* buffer = recibir_buffer(&size, cliente_fd);
             free(buffer);
 
             enviar_mensajeInt(BLOCK_SIZE, cliente_fd);
-            log_info(logger, "[Worker %d] Handshake atendido, se envió BLOCK_SIZE=%d", worker_id, BLOCK_SIZE);
+            log_info(logger, "[Worker %d] Handshake atendido, se envió BLOCK_SIZE=%d",
+                     worker_id, BLOCK_SIZE);
             break;
         }
 
@@ -95,7 +107,7 @@ void* atender_worker(void* arg) {
             }
 
             int offset = 0;
-            int query_id = 0;
+            int query_id;
             memcpy(&query_id, buffer + offset, sizeof(int));
             offset += sizeof(int);
 
@@ -121,16 +133,15 @@ void* atender_worker(void* arg) {
             }
 
             int offset = 0;
-            int query_id = 0;
+            int query_id;
             memcpy(&query_id, buffer + offset, sizeof(int));
             offset += sizeof(int);
 
             char* file = deserializar_string(buffer, &offset);
             char* tag  = deserializar_string(buffer, &offset);
 
-            uint32_t nuevo_tamanio = 0;
+            uint32_t nuevo_tamanio;
             memcpy(&nuevo_tamanio, buffer + offset, sizeof(uint32_t));
-            offset += sizeof(uint32_t);
 
             fs_result_t r = fs_truncar(file, tag, nuevo_tamanio, query_id);
             int resultado = (int)r;
@@ -151,21 +162,23 @@ void* atender_worker(void* arg) {
             }
 
             int offset = 0;
-            int query_id = 0;
+            int query_id;
             memcpy(&query_id, buffer + offset, sizeof(int));
             offset += sizeof(int);
 
             char* file = deserializar_string(buffer, &offset);
             char* tag  = deserializar_string(buffer, &offset);
 
-            uint32_t nro_bloque_logico = 0;
+            uint32_t nro_bloque_logico;
             memcpy(&nro_bloque_logico, buffer + offset, sizeof(uint32_t));
-            offset += sizeof(uint32_t);
 
             free(buffer);
 
             void* bloque = malloc(BLOCK_SIZE);
-            fs_result_t r = fs_leer_bloque(file, tag, nro_bloque_logico, bloque, query_id);
+
+            fs_result_t r =
+                fs_leer_bloque(file, tag, nro_bloque_logico, bloque, query_id);
+
             int resultado = (int)r;
             send(cliente_fd, &resultado, sizeof(int), 0);
             if (r == FS_OK) {
@@ -187,25 +200,26 @@ void* atender_worker(void* arg) {
             }
 
             int offset = 0;
-            int query_id = 0;
+            int query_id;
             memcpy(&query_id, buffer + offset, sizeof(int));
             offset += sizeof(int);
 
             char* file = deserializar_string(buffer, &offset);
             char* tag  = deserializar_string(buffer, &offset);
 
-            uint32_t nro_bloque_logico = 0;
+            uint32_t nro_bloque_logico;
             memcpy(&nro_bloque_logico, buffer + offset, sizeof(uint32_t));
             offset += sizeof(uint32_t);
 
-            // El resto del buffer es el contenido del bloque
             int bytes_restantes = size - offset;
             if (bytes_restantes != BLOCK_SIZE) {
-                log_warning(logger, "[Worker %d] WRITE_BLOCK con tamaño de bloque inesperado (%d, esperaba %d)",
+                log_warning(logger, "[Worker %d] WRITE_BLOCK tamaño inesperado (%d, esperaba %d)",
                             worker_id, bytes_restantes, BLOCK_SIZE);
             }
 
-            fs_result_t r = fs_escribir_bloque(file, tag, nro_bloque_logico, buffer + offset, query_id);
+            fs_result_t r = fs_escribir_bloque(file, tag, nro_bloque_logico,
+                                               buffer + offset, query_id);
+
             int resultado = (int)r;
             send(cliente_fd, &resultado, sizeof(int), 0);
 
@@ -216,80 +230,14 @@ void* atender_worker(void* arg) {
         }
 
         default:
-            log_warning(logger, "[Worker %d] Operación desconocida recibida: %d", worker_id, cod_op);
+            log_warning(logger, "[Worker %d] Operación desconocida recibida: %d",
+                        worker_id, cod_op);
             seguir = false;
             break;
         }
-        free(mensaje);
-    } else if (cod_op == CREATE_FILE) {
-        int size = 0;
-        void* buffer = recibir_buffer(&size, cliente_fd);
-        
-        int offset = 0;
-        
-        int file_name_size;
-        memcpy(&file_name_size, buffer + offset, sizeof(int));
-        offset += sizeof(int);
-        
-        char* file_name = malloc(file_name_size);
-        memcpy(file_name, buffer + offset, file_name_size);
-        offset += file_name_size;
-
-        int tag_size;
-        memcpy(&tag_size, buffer + offset, sizeof(int));
-        offset += sizeof(int);
-
-        char* tag = malloc(tag_size);
-        memcpy(tag, buffer + offset, tag_size);
-
-        log_info(logger, "[Hilo %lu] CREATE_FILE received. File: %s, Tag: %s", pthread_self(), file_name, tag);
-
-        // Implementar logica del archivo de creacion
-
-        free(file_name);
-        free(tag);
-        free(buffer);
-
-    } else if (cod_op == TRUNCATE_FILE) {
-        int size = 0;
-        void* buffer = recibir_buffer(&size, cliente_fd);
-        
-        int offset = 0;
-        
-        int file_name_size;
-        memcpy(&file_name_size, buffer + offset, sizeof(int));
-        offset += sizeof(int);
-        
-        char* file_name = malloc(file_name_size);
-        memcpy(file_name, buffer + offset, file_name_size);
-        offset += file_name_size;
-
-        int tag_size;
-        memcpy(&tag_size, buffer + offset, sizeof(int));
-        offset += sizeof(int);
-
-        char* tag = malloc(tag_size);
-        memcpy(tag, buffer + offset, tag_size);
-        offset += tag_size;
-
-        int new_size;
-        memcpy(&new_size, buffer + offset, sizeof(int));
-
-        log_info(logger, "[Hilo %lu] TRUNCATE_FILE received. File: %s, Tag: %s, New Size: %d", pthread_self(), file_name, tag, new_size);
-
-        // Implementar archivo para truncarr aca
-
-        free(file_name);
-        free(tag);
-        free(buffer);
-
-    } else if (cod_op == -1) {
-        log_warning(logger, "[Hilo %lu] El Worker en socket %d cerró la conexión inesperadamente", pthread_self(), cliente_fd);
-    } else {
-        log_warning(logger, "[Hilo %lu] Operación desconocida recibida: %d", pthread_self(), cod_op);
     }
 
-    log_info(logger, "[Worker %d] Tarea finalizada. Cerrando conexión socket %d.", worker_id, cliente_fd);
+    // cierre correcto de hilo
     close(cliente_fd);
 
     pthread_mutex_lock(&mutex_workers);
@@ -298,3 +246,4 @@ void* atender_worker(void* arg) {
 
     return NULL;
 }
+
